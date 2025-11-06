@@ -1,0 +1,39 @@
+@reference "../globals.css";
+
+.main {
+  @apply flex min-h-screen flex-col items-center justify-center gap-11 p-5 sm:gap-13;
+
+  .heading {
+    @apply text-3xl font-medium sm:text-4xl;
+  }
+
+  .card {
+    @apply bg-secondary w-full rounded-md p-6 sm:w-120 sm:p-8;
+
+    .card__btnWrapper {
+      @apply space-y-3;
+
+      .card__btn {
+        @apply flex w-full gap-4 rounded-xs;
+
+        .card__btnIcon {
+          @apply w-6;
+        }
+      }
+
+      .card__btn-google {
+      }
+      .card__btn--github {
+        @apply bg-card text-foreground;
+      }
+    }
+
+    .card__footer {
+      @apply text-muted-foreground mt-6 text-center text-sm;
+
+      .card__footerBtn {
+        @apply p-0;
+      }
+    }
+  }
+}
