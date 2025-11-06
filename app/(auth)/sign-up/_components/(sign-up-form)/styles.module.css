@@ -1,0 +1,19 @@
+@reference "../../../../globals.css";
+
+.btnWrapper {
+  @apply mt-6 space-y-3;
+
+  .btn {
+    @apply flex w-full gap-4 rounded-xs;
+
+    .btn__icon {
+      @apply w-6;
+    }
+  }
+
+  .btn-google {
+  }
+  .btn--github {
+    @apply bg-card text-foreground;
+  }
+}
