@@ -1,0 +1,37 @@
+@reference "../globals.css";
+
+.container {
+  @apply mx-4 my-4 flex flex-col items-center md:mx-auto md:w-180;
+
+  .headerImg {
+    @apply w-35 rounded sm:w-37;
+  }
+
+  .heading {
+    @apply mt-10 text-center text-3xl leading-10 font-semibold sm:mt-13 sm:text-4xl sm:leading-14 lg:mt-15 lg:text-5xl lg:leading-16;
+  }
+
+  .desc {
+    @apply text-muted-foreground my-6 text-center sm:my-7 sm:text-lg lg:text-xl;
+  }
+
+  .questions {
+    @apply sm:w-2/3;
+
+    .questions__heading {
+      @apply before:bg-theme-primary relative mb-4 text-lg font-medium uppercase before:absolute before:-bottom-2 before:h-[3px] before:w-11 before:rounded-[1px] before:content-[''];
+    }
+
+    .questions__list {
+      @apply text-muted-foreground list-disc pl-4;
+    }
+  }
+
+  .btn {
+    @apply bg-theme-primary hover:bg-theme-primary/90 mt-12 p-4 sm:mt-15 sm:p-5 sm:text-lg lg:p-6;
+
+    .btn__icon {
+      @apply sm:ml-1;
+    }
+  }
+}
