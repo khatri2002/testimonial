@@ -79,7 +79,7 @@ export default function TestimonialDialog({
         <DialogHeader>
           <DialogTitle>Send Testimonial</DialogTitle>
           <DialogDescription className="sr-only">
-            {/* TODO */}
+            Fill out the form to send your testimonial.
           </DialogDescription>
         </DialogHeader>
 
