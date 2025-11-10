@@ -1,6 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { Send } from "lucide-react";
 import Image from "next/image";
+import DialogHandler from "./_components/dialog-handler";
 import styles from "./styles.module.css";
 
 export default function TestimonialForm() {
@@ -27,10 +26,10 @@ export default function TestimonialForm() {
           <li>What is the best thing about [our product / service]</li>
         </ul>
       </div>
-      <Button className={styles.btn}>
-        <span>Send Testimonial</span>
-        <Send className={styles.btn__icon} />
-      </Button>
+
+      <div className={styles.dialogHandlerWrapper}>
+        <DialogHandler />
+      </div>
     </main>
   );
 }

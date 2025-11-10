@@ -27,11 +27,7 @@
     }
   }
 
-  .btn {
-    @apply bg-theme-primary hover:bg-theme-primary/90 mt-12 p-4 sm:mt-15 sm:p-5 sm:text-lg lg:p-6;
-
-    .btn__icon {
-      @apply sm:ml-1;
-    }
+  .dialogHandlerWrapper {
+    @apply mt-12 sm:mt-15;
   }
 }
