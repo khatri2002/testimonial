@@ -17,6 +17,7 @@ import {
 import OverlayBlocker from "@/components/ui/overlay-blocker";
 import { Spinner } from "@/components/ui/spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ChevronLeft } from "lucide-react";
 import { useEffect } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { otpForm } from "../_lib/schema";
@@ -95,6 +96,7 @@ export default function OtpDialog({
           <DialogFooter className="mt-6">
             <DialogClose asChild>
               <Button type="button" variant="outline" onClick={handleBack}>
+                <ChevronLeft />
                 Back
               </Button>
             </DialogClose>
