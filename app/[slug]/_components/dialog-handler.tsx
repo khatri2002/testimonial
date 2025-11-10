@@ -3,10 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { Send } from "lucide-react";
 import { useState } from "react";
+import OtpDialog from "./otp-dialog";
 import TestimonialDialogContent from "./testimonial-dialog";
 
 export default function DialogHandler() {
   const [openTestimonialDialog, setOpenTestimonialDialog] = useState(false);
+  const [openOtpDialog, setOpenOtpDialog] = useState(false);
 
   return (
     <>
@@ -20,9 +22,25 @@ export default function DialogHandler() {
       <TestimonialDialogContent
         open={openTestimonialDialog}
         handleOpenChange={(open) => setOpenTestimonialDialog(open)}
-        onSubmit={async (data) =>
-          await new Promise((resolve) => setTimeout(resolve, 3000))
-        }
+        onSubmit={async (data) => {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          console.log(data);
+          setOpenTestimonialDialog(false);
+          setOpenOtpDialog(true);
+        }}
+      />
+      <OtpDialog
+        open={openOtpDialog}
+        handleOpenChange={(open) => setOpenOtpDialog(open)}
+        onSubmit={async (data) => {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          console.log(data);
+          setOpenOtpDialog(false);
+        }}
+        handleBack={() => {
+          setOpenOtpDialog(false);
+          setOpenTestimonialDialog(true);
+        }}
       />
     </>
   );
