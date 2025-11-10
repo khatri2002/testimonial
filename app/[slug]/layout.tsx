@@ -20,7 +20,7 @@ export default function TestimonialFormLayout({
           />
         </Link>
       </nav>
-      {children}
+      <main className="m-4">{children}</main>
     </>
   );
 }

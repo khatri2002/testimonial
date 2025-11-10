@@ -4,7 +4,7 @@ import styles from "./styles.module.css";
 
 export default function TestimonialForm() {
   return (
-    <main className={styles.container}>
+    <div className={styles.container}>
       <Image
         className={styles.headerImg}
         src="/placeholder.png"
@@ -30,6 +30,6 @@ export default function TestimonialForm() {
       <div className={styles.dialogHandlerWrapper}>
         <DialogHandler />
       </div>
-    </main>
+    </div>
   );
 }
