@@ -4,43 +4,53 @@ import { Button } from "@/components/ui/button";
 import { Send } from "lucide-react";
 import { useState } from "react";
 import OtpDialog from "./otp-dialog";
-import TestimonialDialogContent from "./testimonial-dialog";
+import TestimonialDialog from "./testimonial-dialog";
+import ThankYouDialog from "./thank-you-dialog";
 
 export default function DialogHandler() {
-  const [openTestimonialDialog, setOpenTestimonialDialog] = useState(false);
-  const [openOtpDialog, setOpenOtpDialog] = useState(false);
+  const [activeDialog, setActiveDialog] = useState<
+    "testimonial" | "otp" | "thank-you" | null
+  >(null);
 
   return (
     <>
       <Button
         className="bg-theme-primary hover:bg-theme-primary/90 p-4 sm:p-5 sm:text-lg lg:p-6"
-        onClick={() => setOpenTestimonialDialog(true)}
+        onClick={() => setActiveDialog("testimonial")}
       >
         <span>Send Testimonial</span>
         <Send className="sm:ml-1" />
       </Button>
-      <TestimonialDialogContent
-        open={openTestimonialDialog}
-        handleOpenChange={(open) => setOpenTestimonialDialog(open)}
-        onSubmit={async (data) => {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          console.log(data);
-          setOpenTestimonialDialog(false);
-          setOpenOtpDialog(true);
-        }}
+
+      <TestimonialDialog
+        open={activeDialog === "testimonial"}
+        handleOpenChange={(open) =>
+          setActiveDialog(open ? "testimonial" : null)
+        }
+        onSubmit={() =>
+          new Promise((resolve) =>
+            setTimeout(() => {
+              setActiveDialog("otp");
+              return resolve("data");
+            }, 1000),
+          )
+        }
       />
       <OtpDialog
-        open={openOtpDialog}
-        handleOpenChange={(open) => setOpenOtpDialog(open)}
-        onSubmit={async (data) => {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          console.log(data);
-          setOpenOtpDialog(false);
-        }}
-        handleBack={() => {
-          setOpenOtpDialog(false);
-          setOpenTestimonialDialog(true);
-        }}
+        open={activeDialog === "otp"}
+        onSubmit={() =>
+          new Promise((resolve) =>
+            setTimeout(() => {
+              setActiveDialog("thank-you");
+              return resolve("data");
+            }, 1000),
+          )
+        }
+        handleBack={() => setActiveDialog("testimonial")}
+      />
+      <ThankYouDialog
+        open={activeDialog === "thank-you"}
+        handleOpenChange={(open) => setActiveDialog(open ? "thank-you" : null)}
       />
     </>
   );

@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -18,21 +17,18 @@ import OverlayBlocker from "@/components/ui/overlay-blocker";
 import { Spinner } from "@/components/ui/spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft } from "lucide-react";
-import { useEffect } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { otpForm } from "../_lib/schema";
 import { OtpForm } from "../_lib/types.schema";
 
 interface OtpDialogProps {
   open: boolean;
-  handleOpenChange: (open: boolean) => void;
   onSubmit: (data: OtpForm) => void;
   handleBack: () => void;
 }
 
 export default function OtpDialog({
   open,
-  handleOpenChange,
   onSubmit,
   handleBack,
 }: OtpDialogProps) {
@@ -49,15 +45,10 @@ export default function OtpDialog({
   } = form;
 
   const otp = useWatch({ control, name: "otp" });
-  useEffect(() => {
-    if (otp.length === 4) handleSubmit(onSubmit)();
-  }, [handleSubmit, onSubmit, otp.length]);
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent
-        onInteractOutside={(e) => isSubmitting && e.preventDefault()} // prevent closing when submitting
-      >
+    <Dialog open={open}>
+      <DialogContent className="[&>button]:hidden">
         <DialogHeader>
           <DialogTitle className="text-center">
             Verify Your Email Address
@@ -75,7 +66,14 @@ export default function OtpDialog({
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <div className="flex justify-center">
-                  <InputOTP maxLength={4} {...field}>
+                  <InputOTP
+                    maxLength={4}
+                    {...field}
+                    onChange={(newVal) => {
+                      field.onChange(newVal);
+                      if (newVal.length === 4) handleSubmit(onSubmit)();
+                    }}
+                  >
                     <InputOTPGroup>
                       <InputOTPSlot index={0} />
                       <InputOTPSlot index={1} />
@@ -94,12 +92,10 @@ export default function OtpDialog({
             )}
           />
           <DialogFooter className="mt-6">
-            <DialogClose asChild>
-              <Button type="button" variant="outline" onClick={handleBack}>
-                <ChevronLeft />
-                Back
-              </Button>
-            </DialogClose>
+            <Button type="button" variant="outline" onClick={handleBack}>
+              <ChevronLeft />
+              Back
+            </Button>
             <Button
               type="submit"
               className="bg-theme-primary hover:bg-theme-primary/90"
