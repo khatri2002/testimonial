@@ -1,8 +1,31 @@
+import prisma from "@/lib/prisma";
 import Image from "next/image";
+import { notFound } from "next/navigation";
 import DialogHandler from "./_components/dialog-handler";
 import styles from "./styles.module.css";
 
-export default function TestimonialForm() {
+interface TestimonialFormProps {
+  params: Promise<{ slug: string }>;
+}
+export default async function TestimonialForm({
+  params,
+}: TestimonialFormProps) {
+  const { slug } = await params;
+  const space = await prisma.space.findUnique({
+    where: { slug },
+    include: {
+      spaceBasics: {
+        include: {
+          spaceBasicExtraFields: true,
+        },
+      },
+      spacePrompts: { include: { spacePromptQuestions: true } },
+      spaceExtraSettings: true,
+    },
+  });
+  if (!space) notFound();
+  const { spaceBasics, spacePrompts } = space;
+
   return (
     <div className={styles.container}>
       <Image
@@ -12,23 +35,21 @@ export default function TestimonialForm() {
         width={148}
         height={98}
       />
-      <h1 className={styles.heading}>
-        Would you like to give shoutout for XYZ?
-      </h1>
-      <p className={styles.desc}>
-        Simple directions on how to create a perfect testimonial goes here...!
-      </p>
+      <h1 className={styles.heading}>{spaceBasics?.header}</h1>
+      <p className={styles.desc}>{spaceBasics?.message}</p>
       <div className={styles.questions}>
-        <h3 className={styles.questions__heading}>Questions</h3>
+        <h3 className={styles.questions__heading}>
+          {spacePrompts?.questions_label}
+        </h3>
         <ul className={styles.questions__list}>
-          <li>Who are you / what are you working on?</li>
-          <li>How has [our product / service] helped you?</li>
-          <li>What is the best thing about [our product / service]</li>
+          {spacePrompts?.spacePromptQuestions.map(({ id, question }) => (
+            <li key={id}>{question}</li>
+          ))}
         </ul>
       </div>
 
       <div className={styles.dialogHandlerWrapper}>
-        <DialogHandler />
+        <DialogHandler space={space} />
       </div>
     </div>
   );

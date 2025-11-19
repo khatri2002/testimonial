@@ -19,7 +19,7 @@
     @apply sm:w-2/3;
 
     .questions__heading {
-      @apply before:bg-theme-primary relative mb-4 text-lg font-medium uppercase before:absolute before:-bottom-2 before:h-[3px] before:w-11 before:rounded-[1px] before:content-[''];
+      @apply before:bg-theme-primary relative mb-4 text-lg font-medium before:absolute before:-bottom-2 before:h-[3px] before:w-11 before:rounded-[1px] before:content-[''];
     }
 
     .questions__list {

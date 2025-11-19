@@ -1,5 +1,4 @@
 import * as z from "zod";
-import { otpForm, testimonialForm } from "./schema";
+import { otpForm } from "./schema";
 
-export type TestimonialForm = z.infer<typeof testimonialForm>;
 export type OtpForm = z.infer<typeof otpForm>;

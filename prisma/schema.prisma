@@ -82,6 +82,7 @@ enum FieldsType {
 model Space_basic_extra_fields {
   id       String     @id @default(uuid())
   name     String
+  label    String
   type     FieldsType @default(string)
   required Boolean
 

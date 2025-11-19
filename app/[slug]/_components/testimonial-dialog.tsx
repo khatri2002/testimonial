@@ -24,37 +24,44 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Prisma } from "@/prisma/app/generated/prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { Info, Trash } from "lucide-react";
 import Image from "next/image";
-import { useMemo, useRef } from "react";
+import { Fragment, useMemo, useRef } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { testimonialForm } from "../_lib/schema";
-import { TestimonialForm } from "../_lib/types.schema";
+import { FormField } from "../_lib/types";
+import { buildForm, getDefaultValues } from "../_lib/utils";
 
 interface TestimonialDialogProps {
+  space: Prisma.SpaceGetPayload<{
+    include: {
+      spaceBasics: {
+        include: {
+          spaceBasicExtraFields: true;
+        };
+      };
+      spaceExtraSettings: true;
+    };
+  }>;
   open: boolean;
   handleOpenChange: (open: boolean) => void;
-  onSubmit: (data: TestimonialForm) => void;
+  onSubmit: (data: Record<string, unknown>) => void;
 }
 
 export default function TestimonialDialog({
+  space,
   open,
   handleOpenChange,
   onSubmit,
 }: TestimonialDialogProps) {
-  const form = useForm<TestimonialForm>({
-    resolver: zodResolver(testimonialForm),
-    defaultValues: {
-      rating: 0,
-      testimonial: "",
-      name: "",
-      organization: "",
-      email: "",
-      photo: undefined,
-      consent: false,
-    },
+  const { fields, schema } = buildForm(space);
+  const defaultValues = getDefaultValues(fields);
+
+  const form = useForm({
+    resolver: zodResolver(schema),
+    defaultValues,
   });
   const {
     control,
@@ -69,24 +76,15 @@ export default function TestimonialDialog({
     [photo],
   );
 
-  return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent
-        className="max-h-screen overflow-y-scroll"
-        onOpenAutoFocus={(e) => e.preventDefault()} // prevent focus trap
-        onInteractOutside={(e) => isSubmitting && e.preventDefault()} // prevent closing when submitting
-      >
-        <DialogHeader>
-          <DialogTitle>Send Testimonial</DialogTitle>
-          <DialogDescription className="sr-only">
-            Fill out the form to send your testimonial.
-          </DialogDescription>
-        </DialogHeader>
-
-        <form className="mt-2 space-y-4" onSubmit={handleSubmit(onSubmit)}>
+  const renderField = (field: FormField) => {
+    const { name, type, maxChars, placeholder, tooltip, label, required } =
+      field;
+    switch (type) {
+      case "starRating":
+        return (
           <Controller
-            name="rating"
             control={control}
+            name={name}
             render={({ field, fieldState }) => (
               <Field>
                 <Rating
@@ -107,25 +105,31 @@ export default function TestimonialDialog({
               </Field>
             )}
           />
+        );
+
+      case "textarea":
+        return (
           <Controller
-            name="testimonial"
+            name={name}
             control={control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <InputGroup>
                   <InputGroupTextarea
                     {...field}
-                    placeholder="Write your testimonial here..."
-                    id="testimonial"
+                    placeholder={placeholder}
+                    id={name}
                     rows={6}
                     className="min-h-24 resize-none"
                     aria-invalid={fieldState.invalid}
                   />
-                  <InputGroupAddon align="block-end">
-                    <InputGroupText className="tabular-nums">
-                      {field.value.length}/100 characters
-                    </InputGroupText>
-                  </InputGroupAddon>
+                  {maxChars && (
+                    <InputGroupAddon align="block-end">
+                      <InputGroupText className="tabular-nums">
+                        {field.value.length}/{maxChars} characters
+                      </InputGroupText>
+                    </InputGroupAddon>
+                  )}
                 </InputGroup>
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -133,69 +137,49 @@ export default function TestimonialDialog({
               </Field>
             )}
           />
+        );
+
+      case "textInput":
+        return (
           <Controller
-            name="name"
-            control={control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="name">Name</FieldLabel>
-                <Input {...field} id="name" aria-invalid={fieldState.invalid} />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
-          <Controller
-            name="organization"
-            control={control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="organization">Organization</FieldLabel>
-                <Input
-                  {...field}
-                  id="organization"
-                  aria-invalid={fieldState.invalid}
-                />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
-          <Controller
-            name="email"
+            name={name}
             control={control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <div className="flex items-center gap-3">
-                  <FieldLabel htmlFor="email">Email</FieldLabel>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="cursor-pointer" size={15} />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Your email address will not be shared publicly.</p>
-                    </TooltipContent>
-                  </Tooltip>
+                  <FieldLabel htmlFor={name}>
+                    {label} {required && "*"}
+                  </FieldLabel>
+                  {tooltip && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="cursor-pointer" size={15} />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{tooltip}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
                 </div>
-                <Input
-                  {...field}
-                  id="email"
-                  aria-invalid={fieldState.invalid}
-                />
+                <Input {...field} id={name} aria-invalid={fieldState.invalid} />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
               </Field>
             )}
           />
+        );
+
+      case "photoUpload":
+        return (
           <Controller
-            name="photo"
+            name={name}
             control={control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="photo">Photo</FieldLabel>
+                <FieldLabel htmlFor={name}>
+                  {label} {required && "*"}
+                </FieldLabel>
                 <div className="flex items-center gap-5">
                   <div className="relative size-17 rounded-full bg-muted">
                     {previewPhoto && (
@@ -210,7 +194,7 @@ export default function TestimonialDialog({
                   </div>
                   <div className="flex items-center gap-2">
                     <input
-                      id="photo"
+                      id={name}
                       ref={fileInputRef}
                       type="file"
                       className="sr-only"
@@ -245,25 +229,55 @@ export default function TestimonialDialog({
               </Field>
             )}
           />
+        );
+
+      case "checkbox":
+        return (
           <Controller
-            name="consent"
+            name={name}
             control={control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <div className="flex items-center gap-3">
                   <Checkbox
-                    id="consent"
+                    id={name}
                     checked={field.value}
                     onCheckedChange={field.onChange}
                   />
-                  <FieldLabel htmlFor="consent">
-                    I give permission to use this testimonial across social
-                    channels and other marketing efforts
+                  <FieldLabel htmlFor={name}>
+                    {label} {required && "*"}
                   </FieldLabel>
                 </div>
               </Field>
             )}
           />
+        );
+
+      default:
+        break;
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent
+        className="max-h-screen overflow-y-scroll"
+        onOpenAutoFocus={(e) => e.preventDefault()} // prevent focus trap
+        onInteractOutside={(e) => isSubmitting && e.preventDefault()} // prevent closing when submitting
+      >
+        <DialogHeader>
+          <DialogTitle>Send Testimonial</DialogTitle>
+          <DialogDescription className="sr-only">
+            Fill out the form to send your testimonial.
+          </DialogDescription>
+        </DialogHeader>
+
+        <form className="mt-2 space-y-4" onSubmit={handleSubmit(onSubmit)}>
+          {fields.map((field, index) => (
+            <Fragment key={`${field.name}-${index}`}>
+              {renderField(field)}
+            </Fragment>
+          ))}
           <DialogFooter className="mt-6">
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
