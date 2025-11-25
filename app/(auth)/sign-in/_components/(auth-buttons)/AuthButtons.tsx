@@ -1,6 +1,6 @@
 "use client";
 
-import { handleSignInAction } from "@/actions/authActions";
+import { handleSignInAction } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";

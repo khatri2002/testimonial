@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/input-otp";
 import OverlayBlocker from "@/components/ui/overlay-blocker";
 import { Spinner } from "@/components/ui/spinner";
+import { OTP_LENGTH } from "@/lib/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft } from "lucide-react";
 import { Controller, useForm, useWatch } from "react-hook-form";
@@ -67,18 +68,18 @@ export default function OtpDialog({
               <Field data-invalid={fieldState.invalid}>
                 <div className="flex justify-center">
                   <InputOTP
-                    maxLength={4}
+                    maxLength={OTP_LENGTH}
                     {...field}
                     onChange={(newVal) => {
                       field.onChange(newVal);
-                      if (newVal.length === 4) handleSubmit(onSubmit)();
+                      if (newVal.length === OTP_LENGTH)
+                        handleSubmit(onSubmit)();
                     }}
                   >
                     <InputOTPGroup>
-                      <InputOTPSlot index={0} />
-                      <InputOTPSlot index={1} />
-                      <InputOTPSlot index={2} />
-                      <InputOTPSlot index={3} />
+                      {Array.from({ length: OTP_LENGTH }).map((_, idx) => (
+                        <InputOTPSlot key={idx} index={idx} />
+                      ))}
                     </InputOTPGroup>
                   </InputOTP>
                 </div>
@@ -99,7 +100,7 @@ export default function OtpDialog({
             <Button
               type="submit"
               className="bg-theme-primary hover:bg-theme-primary/90"
-              disabled={otp.length !== 4 || isSubmitting}
+              disabled={otp.length !== OTP_LENGTH || isSubmitting}
             >
               Submit
               {isSubmitting && <Spinner />}

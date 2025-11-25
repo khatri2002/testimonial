@@ -24,17 +24,22 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { FormField } from "@/lib/types";
+import { buildForm } from "@/lib/utils";
 import { Prisma } from "@/prisma/app/generated/prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { Info, Trash } from "lucide-react";
 import Image from "next/image";
-import { Fragment, useMemo, useRef } from "react";
+import { Fragment, useImperativeHandle, useMemo, useRef } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { FormField } from "../_lib/types";
-import { buildForm, getDefaultValues } from "../_lib/utils";
+import { getDefaultValues } from "../_lib/utils";
 
+export interface TestimonialDialogRef {
+  clearForm: () => void;
+}
 interface TestimonialDialogProps {
+  ref?: React.Ref<TestimonialDialogRef>;
   space: Prisma.SpaceGetPayload<{
     include: {
       spaceBasics: {
@@ -51,6 +56,7 @@ interface TestimonialDialogProps {
 }
 
 export default function TestimonialDialog({
+  ref,
   space,
   open,
   handleOpenChange,
@@ -67,6 +73,7 @@ export default function TestimonialDialog({
     control,
     handleSubmit,
     formState: { isSubmitting },
+    reset,
   } = form;
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -75,6 +82,11 @@ export default function TestimonialDialog({
     () => photo && URL.createObjectURL(photo),
     [photo],
   );
+
+  // expose clearForm method to parent via ref
+  useImperativeHandle(ref, () => ({
+    clearForm: () => reset(),
+  }));
 
   const renderField = (field: FormField) => {
     const { name, type, maxChars, placeholder, tooltip, label, required } =

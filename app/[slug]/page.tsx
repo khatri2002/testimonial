@@ -20,6 +20,7 @@ export default async function TestimonialForm({
         },
       },
       spacePrompts: { include: { spacePromptQuestions: true } },
+      spaceThankYouScreens: true,
       spaceExtraSettings: true,
     },
   });

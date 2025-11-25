@@ -52,6 +52,8 @@ model Space {
 
   user   User   @relation(fields: [userId], references: [id])
   userId String
+
+  responses Response[]
 }
 
 enum PhotoFieldMode {
@@ -151,4 +153,12 @@ model Space_extra_setting {
 
   space   Space  @relation(fields: [spaceId], references: [id])
   spaceId String @unique
+}
+
+model Response {
+  id       String @id @default(uuid())
+  response Json
+
+  space   Space  @relation(fields: [spaceId], references: [id])
+  spaceId String
 }
