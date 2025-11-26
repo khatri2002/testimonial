@@ -18,6 +18,7 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  spaces    Space[]
 }
 
 model Account {
@@ -39,4 +40,125 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([provider, providerAccountId])
+}
+
+model Space {
+  id                   String                  @id @default(cuid())
+  slug                 String                  @unique
+  spaceBasics          Space_basic?
+  spacePrompts         Space_prompt?
+  spaceThankYouScreens Space_thank_you_screen?
+  spaceExtraSettings   Space_extra_setting?
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  responses Response[]
+}
+
+enum PhotoFieldMode {
+  required
+  optional
+  hidden
+}
+
+model Space_basic {
+  id                    String                     @id @default(cuid())
+  header                String
+  message               String
+  image_src             Json
+  image_metadata        Json
+  collect_star_ratings  Boolean                    @default(true)
+  spaceBasicExtraFields Space_basic_extra_fields[]
+  photo_field_mode      PhotoFieldMode
+
+  space   Space  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  spaceId String @unique
+}
+
+enum FieldsType {
+  string
+  email
+}
+
+model Space_basic_extra_fields {
+  id       String     @id @default(uuid())
+  name     String
+  label    String
+  type     FieldsType @default(string)
+  required Boolean
+
+  space_basic   Space_basic @relation(fields: [space_basicId], references: [id])
+  space_basicId String
+}
+
+model Space_prompt {
+  id                   String                  @id @default(uuid())
+  questions_label      String                  @default("Questions")
+  spacePromptQuestions Space_prompt_question[]
+
+  space   Space  @relation(fields: [spaceId], references: [id])
+  spaceId String @unique
+}
+
+model Space_prompt_question {
+  id       String @id @default(uuid())
+  question String
+
+  space_prompt   Space_prompt @relation(fields: [space_promptId], references: [id])
+  space_promptId String
+}
+
+enum ThankYouScreenType {
+  display
+  redirect
+}
+
+model Space_thank_you_screen {
+  id   String             @id @default(uuid())
+  type ThankYouScreenType @default(display)
+
+  // for display type
+  image_src      Json   @default("{ \"url\": \"https://res.cloudinary.com/dwcjzletx/image/upload/v1762846857/samples/paper.png\" }")
+  image_metadata Json
+  title          String @default("Thank you for your response!")
+  message        String @default("Thank you for taking your time out to submit the form. We really appreciate it.")
+
+  // for redirect type
+  redirect_url String?
+
+  space   Space  @relation(fields: [spaceId], references: [id])
+  spaceId String @unique
+}
+
+enum ConsentFieldMode {
+  required
+  optional
+  hidden
+}
+
+enum Theme {
+  dark
+  light
+}
+
+model Space_extra_setting {
+  id                     String           @id @default(uuid())
+  send_button_text       String           @default("Send")
+  max_testimonial_chars  Int?
+  consent_field_mode     ConsentFieldMode @default(required)
+  consent_text           String           @default("I give permission to use this testimonial across social channels and other marketing efforts")
+  verify_submitted_email Boolean          @default(false)
+  theme                  Theme            @default(dark)
+
+  space   Space  @relation(fields: [spaceId], references: [id])
+  spaceId String @unique
+}
+
+model Response {
+  id       String @id @default(uuid())
+  response Json
+
+  space   Space  @relation(fields: [spaceId], references: [id])
+  spaceId String
 }

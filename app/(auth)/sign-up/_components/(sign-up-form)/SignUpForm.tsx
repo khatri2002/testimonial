@@ -1,6 +1,6 @@
 "use client";
 
-import { handleSignInAction } from "@/actions/authActions";
+import { handleSignInAction } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldContent, FieldLabel } from "@/components/ui/field";
