@@ -1,3 +1,4 @@
+import CldImage from "@/components/cld-image";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,8 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { CloudinaryImgSrc } from "@/lib/types";
 import { Space_thank_you_screen } from "@/prisma/app/generated/prisma/client";
-import Image from "next/image";
 
 interface ThankYouDialogProps {
   spaceThankYouScreen: Space_thank_you_screen;
@@ -22,19 +23,20 @@ export default function ThankYouDialog({
   open,
   handleOpenChange,
 }: ThankYouDialogProps) {
-  const { title, message } = spaceThankYouScreen;
+  const { title, message, image_src } = spaceThankYouScreen;
+  const imgSrc = image_src as CloudinaryImgSrc;
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="[&>button]:hidden">
-        <div className="relative w-full h-30 sm:h-42">
-          <Image
-            src="/placeholder.png"
-            alt="thank-you"
-            fill
-            className="object-cover rounded"
-          />
-        </div>
+        <CldImage
+          src={imgSrc.public_id}
+          width={imgSrc.width}
+          height={imgSrc.height}
+          sizes="100vw"
+          alt="testimonial-thank-you"
+          className="rounded"
+        />
 
         <DialogHeader>
           <DialogTitle className="text-center text-xl sm:text-2xl">

@@ -1,5 +1,6 @@
+import CldImage from "@/components/cld-image";
 import prisma from "@/lib/prisma";
-import Image from "next/image";
+import { CloudinaryImgSrc } from "@/lib/types";
 import { notFound } from "next/navigation";
 import DialogHandler from "./_components/dialog-handler";
 import styles from "./styles.module.css";
@@ -26,15 +27,17 @@ export default async function TestimonialForm({
   });
   if (!space) notFound();
   const { spaceBasics, spacePrompts } = space;
+  const imgSrc = spaceBasics?.image_src as CloudinaryImgSrc;
 
   return (
     <div className={styles.container}>
-      <Image
+      <CldImage
+        src={imgSrc.public_id}
+        width={imgSrc.width}
+        height={imgSrc.height}
+        sizes="100vw"
+        alt="testimonial-header"
         className={styles.headerImg}
-        src="/placeholder.png"
-        alt=""
-        width={148}
-        height={98}
       />
       <h1 className={styles.heading}>{spaceBasics?.header}</h1>
       <p className={styles.desc}>{spaceBasics?.message}</p>

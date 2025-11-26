@@ -4,7 +4,7 @@
   @apply flex flex-col items-center md:mx-auto md:w-180;
 
   .headerImg {
-    @apply w-35 rounded sm:w-37;
+    @apply rounded;
   }
 
   .heading {
