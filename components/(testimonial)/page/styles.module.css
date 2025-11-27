@@ -1,4 +1,4 @@
-@reference "../globals.css";
+@reference "../../../app/globals.css";
 
 .container {
   @apply flex flex-col items-center md:mx-auto md:w-180;

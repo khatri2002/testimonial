@@ -25,7 +25,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { FormField } from "@/lib/types";
-import { buildForm } from "@/lib/utils";
+import { buildForm, getDefaultValues } from "@/lib/utils";
 import { Prisma } from "@/prisma/app/generated/prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DialogDescription } from "@radix-ui/react-dialog";
@@ -33,7 +33,6 @@ import { Info, Trash } from "lucide-react";
 import Image from "next/image";
 import { Fragment, useImperativeHandle, useMemo, useRef } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { getDefaultValues } from "../_lib/utils";
 
 export interface TestimonialDialogRef {
   clearForm: () => void;
@@ -193,7 +192,7 @@ export default function TestimonialDialog({
                   {label} {required && "*"}
                 </FieldLabel>
                 <div className="flex items-center gap-5">
-                  <div className="relative size-17 rounded-full bg-muted">
+                  <div className="bg-muted relative size-17 rounded-full">
                     {previewPhoto && (
                       <Image
                         src={previewPhoto}

@@ -19,14 +19,21 @@ import { OTP_LENGTH } from "@/lib/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft } from "lucide-react";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { otpForm } from "../_lib/schema";
-import { OtpForm } from "../_lib/types.schema";
+import * as z from "zod";
 
 interface OtpDialogProps {
   open: boolean;
   onSubmit: (data: OtpForm) => void;
   handleBack: () => void;
 }
+
+const otpForm = z.object({
+  otp: z
+    .string()
+    .min(1, "OTP is required")
+    .length(OTP_LENGTH, `OTP must be of ${OTP_LENGTH} characters`),
+});
+export type OtpForm = z.infer<typeof otpForm>;
 
 export default function OtpDialog({
   open,
@@ -54,9 +61,9 @@ export default function OtpDialog({
           <DialogTitle className="text-center">
             Verify Your Email Address
           </DialogTitle>
-          <DialogDescription className="text-center mt-1">
+          <DialogDescription className="mt-1 text-center">
             Please enter the OTP we&apos;ve sent to your email address{" "}
-            <span className="block text-foreground">jaykhatri@gmail.com</span>
+            <span className="text-foreground block">jaykhatri@gmail.com</span>
           </DialogDescription>
         </DialogHeader>
 
