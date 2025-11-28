@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import OtpDialog, { OtpForm } from "../otp-dialog";
 import TestimonialDialog, { TestimonialDialogRef } from "../testimonial-dialog";
 import ThankYouDialog from "../thank-you-dialog";
-import styles from "./styles.module.css";
+import styles from "./live-styles.module.css";
 
 interface DialogHandlerLiveProps {
   space: Prisma.SpaceGetPayload<{

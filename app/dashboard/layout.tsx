@@ -33,7 +33,7 @@ export default async function DashboardLayout({
       enableSystem
       disableTransitionOnChange
     >
-      <nav className="sticky top-0 flex items-center justify-between border-b px-4 py-4 sm:px-8 md:px-13">
+      <nav className="bg-background sticky top-0 z-10 flex items-center justify-between border-b px-4 py-4 sm:px-8 md:px-13">
         <Link
           href="/dashboard"
           className="relative block h-5 w-40 sm:h-7 md:h-8"

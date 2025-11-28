@@ -1,6 +1,6 @@
 import CldImage from "@/components/cld-image";
 import DialogHandlerPreview from "../dialog-handler/preview";
-import styles from "./styles.module.css";
+import styles from "./preview-styles.module.css";
 
 interface TestimonialPagePreviewProps {
   img: {
@@ -25,28 +25,30 @@ export default async function TestimonialPagePreview({
   sendButtonText,
 }: TestimonialPagePreviewProps) {
   return (
-    <div className={styles.container}>
-      <CldImage
-        src={img.src}
-        width={img.width}
-        height={img.height}
-        sizes="100vw"
-        alt="testimonial-header"
-        className={styles.headerImg}
-      />
-      <h1 className={styles.heading}>{header}</h1>
-      <p className={styles.desc}>{message}</p>
-      <div className={styles.questions}>
-        <h3 className={styles.questions__heading}>{questions.label}</h3>
-        <ul className={styles.questions__list}>
-          {questions.list.map((question, index) => (
-            <li key={`question-${index}`}>{question}</li>
-          ))}
-        </ul>
-      </div>
+    <div className={styles.previewWrapper}>
+      <div className={styles.container}>
+        <CldImage
+          src={img.src}
+          width={img.width}
+          height={img.height}
+          sizes="100vw"
+          alt="testimonial-header"
+          className={styles.headerImg}
+        />
+        <h1 className={styles.heading}>{header}</h1>
+        <p className={styles.desc}>{message}</p>
+        <div className={styles.questions}>
+          <h3 className={styles.questions__heading}>{questions.label}</h3>
+          <ul className={styles.questions__list}>
+            {questions.list.map((question, index) => (
+              <li key={`question-${index}`}>{question}</li>
+            ))}
+          </ul>
+        </div>
 
-      <div className={styles.dialogHandlerWrapper}>
-        <DialogHandlerPreview sendButtonText={sendButtonText} />
+        <div className={styles.dialogHandlerWrapper}>
+          <DialogHandlerPreview sendButtonText={sendButtonText} />
+        </div>
       </div>
     </div>
   );

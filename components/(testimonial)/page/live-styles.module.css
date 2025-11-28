@@ -1,7 +1,7 @@
 @reference "../../../app/globals.css";
 
 .container {
-  @apply flex flex-col items-center md:mx-auto md:w-180;
+  @apply flex max-w-180 flex-col items-center md:mx-auto;
 
   .headerImg {
     @apply rounded;

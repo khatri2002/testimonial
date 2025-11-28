@@ -2,7 +2,7 @@ import CldImage from "@/components/cld-image";
 import { CloudinaryImgSrc } from "@/lib/types";
 import { Prisma } from "@/prisma/app/generated/prisma/client";
 import DialogHandlerLive from "../dialog-handler/live";
-import styles from "./styles.module.css";
+import styles from "./live-styles.module.css";
 
 interface TestimonialPageLiveProps {
   space: Prisma.SpaceGetPayload<{

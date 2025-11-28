@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Send } from "lucide-react";
-import styles from "./styles.module.css";
+import styles from "./preview-styles.module.css";
 
 interface DialogHandlerPreviewProps {
   sendButtonText: string;
