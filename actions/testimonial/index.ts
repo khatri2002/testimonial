@@ -100,3 +100,12 @@ export const submitResponse = async ({
 
   return { success: true, message: "Response saved" };
 };
+
+export const slugExists = async (slug: string) => {
+  try {
+    const exist = await prisma.space.findUnique({ where: { slug } });
+    return { success: true, exist: !!exist };
+  } catch (err) {
+    return { success: false };
+  }
+};

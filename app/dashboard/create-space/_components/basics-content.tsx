@@ -1,3 +1,4 @@
+import { slugExists } from "@/actions/testimonial";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -24,19 +25,28 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronDown, CirclePlus, Trash } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  ChevronDown,
+  CircleAlert,
+  CircleCheck,
+  CirclePlus,
+  Trash,
+} from "lucide-react";
 import Image from "next/image";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Controller,
   useFieldArray,
   useFormContext,
   useWatch,
 } from "react-hook-form";
+import { useDebounce } from "use-debounce";
 import { CreateSpaceSchema } from "../_lib/schema.types";
+import { slugify } from "../_lib/utils";
 
 export default function BasicContent() {
-  const { control, resetField, setValue, getValues } =
+  const { control, resetField, setValue, getValues, watch, getFieldState } =
     useFormContext<CreateSpaceSchema>();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -72,6 +82,45 @@ export default function BasicContent() {
     }
   };
 
+  const [slugAlert, setSlugAlert] = useState<{
+    show: boolean;
+    variant: null | "success" | "error";
+    message: string;
+  }>({
+    show: false,
+    variant: null,
+    message: "",
+  });
+  const slug = watch("basics.slug");
+  const [debouncedSlug] = useDebounce(slug, 500);
+  useEffect(() => {
+    const handleSlugExist = async (slug: string) => {
+      const { invalid } = getFieldState("basics.slug");
+      if (invalid || !slug) {
+        setSlugAlert({ show: false, variant: null, message: "" });
+        return;
+      }
+
+      const { success, exist } = await slugExists(slug);
+      if (success) {
+        if (exist)
+          setSlugAlert({
+            show: true,
+            variant: "error",
+            message: "This public URL is already taken.",
+          });
+        else
+          setSlugAlert({
+            show: true,
+            variant: "success",
+            message: "This public URL is available!",
+          });
+      }
+    };
+
+    handleSlugExist(debouncedSlug);
+  }, [debouncedSlug, getFieldState]);
+
   return (
     <>
       <h2 className="my-3 text-center text-3xl font-medium">Basic Details</h2>
@@ -87,6 +136,14 @@ export default function BasicContent() {
                   {...field}
                   id="basics.name"
                   aria-invalid={fieldState.invalid}
+                  onChange={(e) => {
+                    // auto-generate slug on name change
+                    const name = e.target.value;
+                    const slug = slugify(name);
+                    setValue("basics.slug", slug, { shouldValidate: true });
+
+                    field.onChange(e);
+                  }}
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -110,10 +167,33 @@ export default function BasicContent() {
                     {...field}
                     id="basics.slug"
                     className="rounded-l-none border-l-0"
+                    onChange={(e) => {
+                      // validate on change
+                      setValue("basics.slug", e.target.value, {
+                        shouldValidate: true,
+                      });
+                    }}
                   />
                 </div>
-                {fieldState.invalid && (
+                {fieldState.invalid ? (
                   <FieldError errors={[fieldState.error]} />
+                ) : (
+                  slugAlert.show && (
+                    <div
+                      className={cn("flex items-center gap-2", {
+                        "text-chart-2": slugAlert.variant === "success",
+                        "text-destructive": slugAlert.variant === "error",
+                      })}
+                    >
+                      {slugAlert.variant == "success" ? (
+                        <CircleCheck size={17} />
+                      ) : (
+                        <CircleAlert size={17} />
+                      )}
+
+                      <span className="text-sm">{slugAlert.message}</span>
+                    </div>
+                  )
                 )}
               </Field>
             )}
