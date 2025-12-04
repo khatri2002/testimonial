@@ -18,7 +18,7 @@ interface ThankYouDialogProps {
   handleOpenChange: (open: boolean) => void;
 }
 
-export default function ThankYouDialog({
+export default function ThankYouDialogLive({
   spaceThankYouScreen,
   open,
   handleOpenChange,

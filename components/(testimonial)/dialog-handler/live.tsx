@@ -11,7 +11,7 @@ import { useRef, useState } from "react";
 import { toast } from "sonner";
 import OtpDialog, { OtpForm } from "../otp-dialog";
 import TestimonialDialog, { TestimonialDialogRef } from "../testimonial-dialog";
-import ThankYouDialog from "../thank-you-dialog";
+import ThankYouDialogLive from "../thank-you-dialog/live";
 import styles from "./live-styles.module.css";
 
 interface DialogHandlerLiveProps {
@@ -119,7 +119,7 @@ export default function DialogHandlerLive({ space }: DialogHandlerLiveProps) {
         handleBack={() => setActiveDialog("testimonial")}
       />
       {spaceThankYouScreens && (
-        <ThankYouDialog
+        <ThankYouDialogLive
           spaceThankYouScreen={spaceThankYouScreens}
           open={activeDialog === "thank-you"}
           handleOpenChange={(open) =>

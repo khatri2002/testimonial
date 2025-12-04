@@ -1,14 +1,14 @@
 @reference "../../../app/globals.css";
 
 .container {
-  @apply flex max-w-180 flex-col items-center md:mx-auto;
+  @apply bg-background flex max-w-180 flex-col items-center md:mx-auto;
 
   .headerImg {
     @apply rounded;
   }
 
   .heading {
-    @apply mt-10 text-center text-3xl leading-10 font-semibold sm:mt-13 sm:text-4xl sm:leading-14 lg:mt-15 lg:text-5xl lg:leading-16;
+    @apply text-foreground mt-10 text-center text-3xl leading-10 font-semibold sm:mt-13 sm:text-4xl sm:leading-14 lg:mt-15 lg:text-5xl lg:leading-16;
   }
 
   .desc {
@@ -19,7 +19,7 @@
     @apply sm:w-2/3;
 
     .questions__heading {
-      @apply before:bg-theme-primary relative mb-4 text-lg font-medium before:absolute before:-bottom-2 before:h-[3px] before:w-11 before:rounded-[1px] before:content-[''];
+      @apply before:bg-theme-primary text-foreground relative mb-4 text-lg font-medium before:absolute before:-bottom-2 before:h-[3px] before:w-11 before:rounded-[1px] before:content-[''];
     }
 
     .questions__list {
