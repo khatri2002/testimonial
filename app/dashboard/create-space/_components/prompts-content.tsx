@@ -7,9 +7,9 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { CreateSpaceSchema } from "@/lib/schema/schema.types";
 import { CirclePlus, EllipsisVertical, Trash } from "lucide-react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
-import { CreateSpaceSchema } from "../_lib/schema.types";
 
 export default function PromptsContent() {
   const { control } = useFormContext<CreateSpaceSchema>();

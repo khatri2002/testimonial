@@ -10,11 +10,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
+import { CreateSpaceSchema } from "@/lib/schema/schema.types";
 import { Trash } from "lucide-react";
 import Image from "next/image";
 import { useMemo, useRef } from "react";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
-import { CreateSpaceSchema } from "../_lib/schema.types";
 
 export default function ThankYouContent() {
   const { control, watch, resetField } = useFormContext<CreateSpaceSchema>();

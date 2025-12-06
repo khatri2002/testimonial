@@ -78,7 +78,7 @@ model Space_basic {
 }
 
 enum FieldsType {
-  string
+  text
   email
 }
 
@@ -86,7 +86,7 @@ model Space_basic_extra_fields {
   id       String     @id @default(uuid())
   name     String
   label    String
-  type     FieldsType @default(string)
+  type     FieldsType @default(text)
   required Boolean
 
   space_basic   Space_basic @relation(fields: [space_basicId], references: [id])

@@ -16,8 +16,8 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { CreateSpaceSchema } from "@/lib/schema/schema.types";
 import { Controller, useFormContext } from "react-hook-form";
-import { CreateSpaceSchema } from "../_lib/schema.types";
 
 export default function ExtraSettingsContent() {
   const { control } = useFormContext<CreateSpaceSchema>();

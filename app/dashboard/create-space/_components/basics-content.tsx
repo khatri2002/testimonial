@@ -1,4 +1,3 @@
-import { slugExists } from "@/actions/testimonial";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -25,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { CreateSpaceSchema } from "@/lib/schema/schema.types";
 import { cn } from "@/lib/utils";
 import {
   ChevronDown,
@@ -34,19 +34,22 @@ import {
   Trash,
 } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   Controller,
   useFieldArray,
   useFormContext,
   useWatch,
 } from "react-hook-form";
-import { useDebounce } from "use-debounce";
-import { CreateSpaceSchema } from "../_lib/schema.types";
+import { SlugAlert } from "../_lib/types";
 import { slugify } from "../_lib/utils";
 
-export default function BasicContent() {
-  const { control, resetField, setValue, getValues, watch, getFieldState } =
+interface BasicContentProps {
+  slugAlert: SlugAlert;
+}
+
+export default function BasicContent({ slugAlert }: BasicContentProps) {
+  const { control, resetField, setValue, getValues } =
     useFormContext<CreateSpaceSchema>();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -81,45 +84,6 @@ export default function BasicContent() {
       setValue("basics.extra_fields_user", filteredExtraFields);
     }
   };
-
-  const [slugAlert, setSlugAlert] = useState<{
-    show: boolean;
-    variant: null | "success" | "error";
-    message: string;
-  }>({
-    show: false,
-    variant: null,
-    message: "",
-  });
-  const slug = watch("basics.slug");
-  const [debouncedSlug] = useDebounce(slug, 500);
-  useEffect(() => {
-    const handleSlugExist = async (slug: string) => {
-      const { invalid } = getFieldState("basics.slug");
-      if (invalid || !slug) {
-        setSlugAlert({ show: false, variant: null, message: "" });
-        return;
-      }
-
-      const { success, exist } = await slugExists(slug);
-      if (success) {
-        if (exist)
-          setSlugAlert({
-            show: true,
-            variant: "error",
-            message: "This public URL is already taken.",
-          });
-        else
-          setSlugAlert({
-            show: true,
-            variant: "success",
-            message: "This public URL is available!",
-          });
-      }
-    };
-
-    handleSlugExist(debouncedSlug);
-  }, [debouncedSlug, getFieldState]);
 
   return (
     <>
