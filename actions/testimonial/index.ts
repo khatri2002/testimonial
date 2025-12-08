@@ -6,7 +6,7 @@ import { sendMail } from "@/lib/mail";
 import prisma from "@/lib/prisma";
 import { getRedisClient } from "@/lib/redis";
 import { createSpaceSchema } from "@/lib/schema/schema";
-import { buildForm } from "@/lib/utils";
+import { buildFormServer } from "@/lib/utils";
 import { Prisma } from "@/prisma/app/generated/prisma/client";
 import { emailSchema } from "./lib/schema";
 import { OtpEmailTemplate } from "./lib/templates";
@@ -50,11 +50,11 @@ export const sendOtp = async (email: string) => {
 
 export const submitResponse = async ({
   spaceId,
-  data,
+  fd,
   otp,
 }: {
   spaceId: string;
-  data: Record<string, unknown>;
+  fd: FormData;
   otp?: string;
 }) => {
   // fetch space
@@ -68,11 +68,21 @@ export const submitResponse = async ({
   if (!space) return { success: false, message: "Space not found" };
 
   // validate data
-  const { schema, fields } = buildForm(space);
-  try {
-    schema.parse(data);
-  } catch (err) {
+  const { schema, fields } = buildFormServer(space);
+
+  const json = fd.get("json");
+  if (!json || typeof json !== "string")
     return { success: false, message: "Invalid response" };
+
+  const jsonParsed = JSON.parse(json);
+  const { data, success } = schema.safeParse(jsonParsed);
+  if (!success) return { success: false, message: "Invalid response" };
+
+  let photo;
+  if (space.spaceBasics?.photo_field_mode !== "hidden") {
+    photo = fd.get("photo") as File | null;
+    if (space.spaceBasics?.photo_field_mode === "required" && !photo)
+      return { success: false, message: "Invalid response" };
   }
 
   // verify OTP if required
@@ -92,6 +102,16 @@ export const submitResponse = async ({
     }
   }
 
+  // upload photo if present
+  let photoSrc;
+  if (photo) {
+    try {
+      photoSrc = await uploadFileToCloudinary(photo);
+    } catch (err) {
+      return { success: false, message: "Failed to upload photo" };
+    }
+  }
+
   // save response
   try {
     const labeledData = replaceKeysWithLabels(
@@ -99,7 +119,7 @@ export const submitResponse = async ({
       fields,
     ) as Prisma.InputJsonValue;
     await prisma.response.create({
-      data: { response: labeledData, spaceId },
+      data: { response: labeledData, photo: photoSrc, spaceId },
     });
   } catch (err) {
     return { success: false, message: "Oops! Something went wrong." };
@@ -118,15 +138,18 @@ export const slugExists = async (slug: string) => {
 };
 
 export const createSpace = async (fd: FormData) => {
+  // authenticate user
   const session = await auth();
   if (!session?.user || !session.user.email)
     return { success: false, message: "Unauthorized" };
 
+  // find user
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
   });
   if (!user) return { success: false, message: "Unauthorized" };
 
+  // validate data
   const json = fd.get("json");
   const basicsImage = fd.get("basicsImage") as File | null;
   const thankYouImage = fd.get("thankYouImage") as File | null;
@@ -139,6 +162,7 @@ export const createSpace = async (fd: FormData) => {
   const { success, data } = createSpaceSchema.safeParse(parsedData);
   if (!success) return { success: false, message: "Invalid data" };
 
+  // upload images
   let basicsImageSrc, thankYouImageSrc;
   try {
     if (basicsImage) {
@@ -151,6 +175,7 @@ export const createSpace = async (fd: FormData) => {
     return { success: false, message: "Failed to upload images" };
   }
 
+  // save space
   try {
     const { basics, prompts, thank_you, extra_settings } = data;
     const spaceBasicExtraFields = mergeExtraFields(

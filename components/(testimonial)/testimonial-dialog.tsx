@@ -25,7 +25,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { FormField } from "@/lib/types";
-import { buildForm, getDefaultValues } from "@/lib/utils";
+import { buildFormClient, getDefaultValues } from "@/lib/utils";
 import { Prisma } from "@/prisma/app/generated/prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DialogDescription } from "@radix-ui/react-dialog";
@@ -61,7 +61,7 @@ export default function TestimonialDialog({
   handleOpenChange,
   onSubmit,
 }: TestimonialDialogProps) {
-  const { fields, schema } = buildForm(space);
+  const { fields, schema } = buildFormClient(space);
   const defaultValues = getDefaultValues(fields);
 
   const form = useForm({

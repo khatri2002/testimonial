@@ -159,6 +159,7 @@ model Space_extra_setting {
 model Response {
   id       String @id @default(uuid())
   response Json
+  photo    Json?
 
   space   Space  @relation(fields: [spaceId], references: [id])
   spaceId String

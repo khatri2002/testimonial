@@ -66,10 +66,17 @@ export default function DialogHandlerLive({ space }: DialogHandlerLiveProps) {
       toast.success(message, { position: "bottom-center" });
       setActiveDialog("otp");
     } else {
+      const fd = new FormData();
+      const { photo, ...rest } = data;
+      if (space.spaceBasics?.photo_field_mode !== "hidden")
+        fd.append("photo", photo as File);
+
+      fd.append("json", JSON.stringify(rest));
+
       const { ok, message } = await safeCall(
         submitResponse({
           spaceId: space.id,
-          data,
+          fd,
         }),
       );
       if (!ok) {
@@ -83,8 +90,14 @@ export default function DialogHandlerLive({ space }: DialogHandlerLiveProps) {
   const handleOtpSubmit = async ({ otp }: OtpForm) => {
     if (!formResponse) return;
 
+    const fd = new FormData();
+    const { photo, ...rest } = formResponse;
+    if (space.spaceBasics?.photo_field_mode !== "hidden")
+      fd.append("photo", photo as File);
+    fd.append("json", JSON.stringify(rest));
+
     const { ok, message } = await safeCall(
-      submitResponse({ spaceId: space.id, data: formResponse, otp }),
+      submitResponse({ spaceId: space.id, fd, otp }),
     );
     if (!ok) {
       toast.error(message, { position: "bottom-center" });
