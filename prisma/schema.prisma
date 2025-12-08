@@ -67,8 +67,8 @@ model Space_basic {
   id                    String                     @id @default(cuid())
   header                String
   message               String
-  image_src             Json
-  image_metadata        Json
+  image_src             Json?
+  image_metadata        Json?
   collect_star_ratings  Boolean                    @default(true)
   spaceBasicExtraFields Space_basic_extra_fields[]
   photo_field_mode      PhotoFieldMode
@@ -95,7 +95,7 @@ model Space_basic_extra_fields {
 
 model Space_prompt {
   id                   String                  @id @default(uuid())
-  questions_label      String                  @default("Questions")
+  questions_label      String?
   spacePromptQuestions Space_prompt_question[]
 
   space   Space  @relation(fields: [spaceId], references: [id])
@@ -120,10 +120,10 @@ model Space_thank_you_screen {
   type ThankYouScreenType @default(display)
 
   // for display type
-  image_src      Json   @default("{ \"url\": \"https://res.cloudinary.com/dwcjzletx/image/upload/v1762846857/samples/paper.png\" }")
-  image_metadata Json
-  title          String @default("Thank you for your response!")
-  message        String @default("Thank you for taking your time out to submit the form. We really appreciate it.")
+  image_src      Json?
+  image_metadata Json?
+  title          String?
+  message        String?
 
   // for redirect type
   redirect_url String?
@@ -145,10 +145,10 @@ enum Theme {
 
 model Space_extra_setting {
   id                     String           @id @default(uuid())
-  send_button_text       String           @default("Send")
+  send_button_text       String?
   max_testimonial_chars  Int?
   consent_field_mode     ConsentFieldMode @default(required)
-  consent_text           String           @default("I give permission to use this testimonial across social channels and other marketing efforts")
+  consent_text           String?
   verify_submitted_email Boolean          @default(false)
   theme                  Theme            @default(dark)
 

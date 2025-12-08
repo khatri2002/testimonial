@@ -1,4 +1,4 @@
-import { CreateSpaceSchema } from "@/app/dashboard/create-space/_lib/schema.types";
+import { CreateSpaceSchema } from "@/lib/schema/schema.types";
 import Image from "next/image";
 import { useFormContext } from "react-hook-form";
 import DialogHandlerPreview from "../dialog-handler/preview";

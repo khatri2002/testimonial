@@ -169,8 +169,7 @@ export const createSpace = async (fd: FormData) => {
         spaceBasics: {
           create: {
             header: basics.header,
-            image_metadata: {},
-            image_src: basicsImageSrc || {},
+            image_src: basicsImageSrc,
             message: basics.message,
             photo_field_mode: basics.photo_field_mode,
             collect_star_ratings: basics.collect_star_ratings,
@@ -191,14 +190,14 @@ export const createSpace = async (fd: FormData) => {
             title: thank_you.title,
             message: thank_you.message,
             image_src: thankYouImageSrc,
-            image_metadata: {},
             redirect_url: thank_you.redirect_url,
           },
         },
         spaceExtraSettings: {
           create: {
             send_button_text: extra_settings.send_btn_text,
-            max_testimonial_chars: extra_settings.max_testimonial_chars || null,
+            max_testimonial_chars:
+              extra_settings.max_testimonial_chars || undefined,
             consent_field_mode: extra_settings.consent_field_mode,
             consent_text: extra_settings.consent_text,
             verify_submitted_email: extra_settings.verify_submitted_email,

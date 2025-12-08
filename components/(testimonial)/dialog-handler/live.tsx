@@ -100,7 +100,7 @@ export default function DialogHandlerLive({ space }: DialogHandlerLiveProps) {
         className={styles.btn}
         onClick={() => setActiveDialog("testimonial")}
       >
-        <span>{spaceExtraSettings?.send_button_text}</span>
+        <span>{spaceExtraSettings?.send_button_text || "Send"}</span>
         <Send className={styles.btn__icon} />
       </Button>
 

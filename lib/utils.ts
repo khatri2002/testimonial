@@ -73,7 +73,7 @@ export const buildForm = (
     let fieldSchema;
 
     switch (field.type) {
-      case "string":
+      case "text":
         fieldSchema = z.string().trim();
         if (field.required)
           fieldSchema = fieldSchema.min(1, `${field.label} is required`);
