@@ -29,7 +29,7 @@ export default function ThankYouDialogLive({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="[&>button]:hidden">
-        {imgSrc && (
+        {imgSrc ? (
           <CldImage
             src={imgSrc.public_id}
             width={imgSrc.width}
@@ -37,6 +37,15 @@ export default function ThankYouDialogLive({
             sizes="100vw"
             alt="testimonial-thank-you"
             className="rounded"
+          />
+        ) : (
+          <CldImage
+            src="testimonial-thank-you"
+            alt="thank-you-preview"
+            width={0}
+            height={0}
+            sizes="100vw"
+            className="h-auto w-full rounded"
           />
         )}
 
