@@ -18,32 +18,44 @@ interface ThankYouDialogProps {
   handleOpenChange: (open: boolean) => void;
 }
 
-export default function ThankYouDialog({
+export default function ThankYouDialogLive({
   spaceThankYouScreen,
   open,
   handleOpenChange,
 }: ThankYouDialogProps) {
   const { title, message, image_src } = spaceThankYouScreen;
-  const imgSrc = image_src as CloudinaryImgSrc;
+  const imgSrc = image_src as CloudinaryImgSrc | null;
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="[&>button]:hidden">
-        <CldImage
-          src={imgSrc.public_id}
-          width={imgSrc.width}
-          height={imgSrc.height}
-          sizes="100vw"
-          alt="testimonial-thank-you"
-          className="rounded"
-        />
+        {imgSrc ? (
+          <CldImage
+            src={imgSrc.public_id}
+            width={imgSrc.width}
+            height={imgSrc.height}
+            sizes="100vw"
+            alt="testimonial-thank-you"
+            className="rounded"
+          />
+        ) : (
+          <CldImage
+            src="testimonial-thank-you"
+            alt="thank-you-preview"
+            width={0}
+            height={0}
+            sizes="100vw"
+            className="h-auto w-full rounded"
+          />
+        )}
 
         <DialogHeader>
           <DialogTitle className="text-center text-xl sm:text-2xl">
-            {title}
+            {title || "Thank you for your response!"}
           </DialogTitle>
           <DialogDescription className="text-center sm:text-lg">
-            {message}
+            {message ||
+              "Thank you for taking your time out to submit the form. We really appreciate it."}
           </DialogDescription>
         </DialogHeader>
 

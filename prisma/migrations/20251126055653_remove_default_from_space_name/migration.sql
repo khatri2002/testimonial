@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Space" ALTER COLUMN "name" DROP DEFAULT;

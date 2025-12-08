@@ -9,12 +9,12 @@ import { Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
-import { OtpForm } from "../_lib/types.schema";
-import OtpDialog from "./otp-dialog";
-import TestimonialDialog, { TestimonialDialogRef } from "./testimonial-dialog";
-import ThankYouDialog from "./thank-you-dialog";
+import OtpDialog, { OtpForm } from "../otp-dialog";
+import TestimonialDialog, { TestimonialDialogRef } from "../testimonial-dialog";
+import ThankYouDialogLive from "../thank-you-dialog/live";
+import styles from "./live-styles.module.css";
 
-interface DialogHandlerProps {
+interface DialogHandlerLiveProps {
   space: Prisma.SpaceGetPayload<{
     include: {
       spaceBasics: {
@@ -27,7 +27,7 @@ interface DialogHandlerProps {
     };
   }>;
 }
-export default function DialogHandler({ space }: DialogHandlerProps) {
+export default function DialogHandlerLive({ space }: DialogHandlerLiveProps) {
   const [activeDialog, setActiveDialog] = useState<
     "testimonial" | "otp" | "thank-you" | null
   >(null);
@@ -66,10 +66,17 @@ export default function DialogHandler({ space }: DialogHandlerProps) {
       toast.success(message, { position: "bottom-center" });
       setActiveDialog("otp");
     } else {
+      const fd = new FormData();
+      const { photo, ...rest } = data;
+      if (space.spaceBasics?.photo_field_mode !== "hidden")
+        fd.append("photo", photo as File);
+
+      fd.append("json", JSON.stringify(rest));
+
       const { ok, message } = await safeCall(
         submitResponse({
           spaceId: space.id,
-          data,
+          fd,
         }),
       );
       if (!ok) {
@@ -83,8 +90,14 @@ export default function DialogHandler({ space }: DialogHandlerProps) {
   const handleOtpSubmit = async ({ otp }: OtpForm) => {
     if (!formResponse) return;
 
+    const fd = new FormData();
+    const { photo, ...rest } = formResponse;
+    if (space.spaceBasics?.photo_field_mode !== "hidden")
+      fd.append("photo", photo as File);
+    fd.append("json", JSON.stringify(rest));
+
     const { ok, message } = await safeCall(
-      submitResponse({ spaceId: space.id, data: formResponse, otp }),
+      submitResponse({ spaceId: space.id, fd, otp }),
     );
     if (!ok) {
       toast.error(message, { position: "bottom-center" });
@@ -97,11 +110,11 @@ export default function DialogHandler({ space }: DialogHandlerProps) {
   return (
     <>
       <Button
-        className="bg-theme-primary hover:bg-theme-primary/90 p-4 sm:p-5 sm:text-lg lg:p-6"
+        className={styles.btn}
         onClick={() => setActiveDialog("testimonial")}
       >
-        <span>{spaceExtraSettings?.send_button_text}</span>
-        <Send className="sm:ml-1" />
+        <span>{spaceExtraSettings?.send_button_text || "Send"}</span>
+        <Send className={styles.btn__icon} />
       </Button>
 
       <TestimonialDialog
@@ -119,7 +132,7 @@ export default function DialogHandler({ space }: DialogHandlerProps) {
         handleBack={() => setActiveDialog("testimonial")}
       />
       {spaceThankYouScreens && (
-        <ThankYouDialog
+        <ThankYouDialogLive
           spaceThankYouScreen={spaceThankYouScreens}
           open={activeDialog === "thank-you"}
           handleOpenChange={(open) =>

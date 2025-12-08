@@ -1,0 +1,9 @@
+@reference "../../../app/globals.css";
+
+.btn {
+  @apply bg-theme-primary hover:bg-theme-primary/90 p-4 @sm:p-5 @sm:text-lg @lg:p-6;
+
+  .btn__icon {
+    @apply @sm:ml-1;
+  }
+}
