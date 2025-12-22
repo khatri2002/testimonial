@@ -8,6 +8,7 @@ import { getRedisClient } from "@/lib/redis";
 import { createSpaceSchema } from "@/lib/schema/schema";
 import { buildFormServer } from "@/lib/utils";
 import { Prisma } from "@/prisma/app/generated/prisma/client";
+import { revalidatePath } from "next/cache";
 import { emailSchema } from "./lib/schema";
 import { OtpEmailTemplate } from "./lib/templates";
 import {
@@ -236,4 +237,141 @@ export const createSpace = async (fd: FormData) => {
   }
 
   return { success: true, message: "Success" };
+};
+
+export const duplicateSpace = async (id: string) => {
+  // authenticate user
+  const session = await auth();
+  if (!session?.user || !session.user.email)
+    return { success: false, message: "Unauthorized" };
+
+  // find user
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    include: {
+      spaces: true,
+    },
+  });
+  if (!user) return { success: false, message: "Unauthorized" };
+
+  // check if space exists
+  const exists = user.spaces.some((space) => space.id === id);
+  if (!exists) return { success: false, message: "Space not found" };
+
+  // duplicate space
+  try {
+    const space = await prisma.space.findUnique({
+      where: { id },
+      include: {
+        spaceBasics: { include: { spaceBasicExtraFields: true } },
+        spacePrompts: { include: { spacePromptQuestions: true } },
+        spaceThankYouScreens: true,
+        spaceExtraSettings: true,
+      },
+    });
+    if (!space) return { success: false, message: "Space not found" };
+
+    // create new slug
+    const newSlug = `${space.slug}-copy-${Date.now()}`;
+
+    await prisma.space.create({
+      data: {
+        name: `${space.name} (Copy)`,
+        slug: newSlug,
+        user: {
+          connect: {
+            id: user.id,
+          },
+        },
+        spaceBasics: {
+          create: {
+            header: space.spaceBasics?.header || "",
+            image_src: space.spaceBasics?.image_src || undefined,
+            message: space.spaceBasics?.message || "",
+            photo_field_mode: space.spaceBasics?.photo_field_mode || "hidden",
+            collect_star_ratings:
+              space.spaceBasics?.collect_star_ratings || false,
+            spaceBasicExtraFields: {
+              create:
+                space.spaceBasics?.spaceBasicExtraFields.map((field) => ({
+                  name: field.name,
+                  label: field.label,
+                  type: field.type,
+                  required: field.required,
+                })) || [],
+            },
+          },
+        },
+        spacePrompts: {
+          create: {
+            questions_label: space.spacePrompts?.questions_label || "",
+            spacePromptQuestions: {
+              create:
+                space.spacePrompts?.spacePromptQuestions.map((question) => ({
+                  question: question.question,
+                })) || [],
+            },
+          },
+        },
+        spaceThankYouScreens: {
+          create: {
+            type: space.spaceThankYouScreens?.type || "display",
+            title: space.spaceThankYouScreens?.title || "",
+            message: space.spaceThankYouScreens?.message || "",
+            image_src: space.spaceThankYouScreens?.image_src || undefined,
+            redirect_url: space.spaceThankYouScreens?.redirect_url || undefined,
+          },
+        },
+        spaceExtraSettings: {
+          create: {
+            send_button_text:
+              space.spaceExtraSettings?.send_button_text || "Send",
+            max_testimonial_chars:
+              space.spaceExtraSettings?.max_testimonial_chars || null,
+            consent_field_mode:
+              space.spaceExtraSettings?.consent_field_mode || "hidden",
+            consent_text: space.spaceExtraSettings?.consent_text || null,
+            verify_submitted_email:
+              space.spaceExtraSettings?.verify_submitted_email || false,
+            theme: space.spaceExtraSettings?.theme || "light",
+          },
+        },
+      },
+    });
+  } catch (err) {
+    return { success: false, message: "Failed to duplicate space" };
+  }
+
+  revalidatePath("/dashboard");
+  return { success: true, message: "Space duplicated" };
+};
+
+export const deleteSpace = async (id: string) => {
+  // authenticate user
+  const session = await auth();
+  if (!session?.user || !session.user.email)
+    return { success: false, message: "Unauthorized" };
+
+  // find user
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    include: {
+      spaces: true,
+    },
+  });
+  if (!user) return { success: false, message: "Unauthorized" };
+
+  // check if space exists
+  const exists = user.spaces.some((space) => space.id === id);
+  if (!exists) return { success: false, message: "Space not found" };
+
+  // delete space
+  try {
+    await prisma.space.delete({ where: { id } });
+  } catch (err) {
+    return { success: false, message: "Failed to delete space" };
+  }
+
+  revalidatePath("/dashboard");
+  return { success: true, message: "Space deleted" };
 };

@@ -89,7 +89,7 @@ model Space_basic_extra_fields {
   type     FieldsType @default(text)
   required Boolean
 
-  space_basic   Space_basic @relation(fields: [space_basicId], references: [id])
+  space_basic   Space_basic @relation(fields: [space_basicId], references: [id], onDelete: Cascade)
   space_basicId String
 }
 
@@ -98,7 +98,7 @@ model Space_prompt {
   questions_label      String?
   spacePromptQuestions Space_prompt_question[]
 
-  space   Space  @relation(fields: [spaceId], references: [id])
+  space   Space  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
   spaceId String @unique
 }
 
@@ -106,7 +106,7 @@ model Space_prompt_question {
   id       String @id @default(uuid())
   question String
 
-  space_prompt   Space_prompt @relation(fields: [space_promptId], references: [id])
+  space_prompt   Space_prompt @relation(fields: [space_promptId], references: [id], onDelete: Cascade)
   space_promptId String
 }
 
@@ -128,7 +128,7 @@ model Space_thank_you_screen {
   // for redirect type
   redirect_url String?
 
-  space   Space  @relation(fields: [spaceId], references: [id])
+  space   Space  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
   spaceId String @unique
 }
 
@@ -152,7 +152,7 @@ model Space_extra_setting {
   verify_submitted_email Boolean          @default(false)
   theme                  Theme            @default(dark)
 
-  space   Space  @relation(fields: [spaceId], references: [id])
+  space   Space  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
   spaceId String @unique
 }
 
@@ -161,6 +161,6 @@ model Response {
   response Json
   photo    Json?
 
-  space   Space  @relation(fields: [spaceId], references: [id])
+  space   Space  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
   spaceId String
 }
