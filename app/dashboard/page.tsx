@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import prisma from "@/lib/prisma";
-import { Plus, Search } from "lucide-react";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { auth } from "../auth";
-import { SpaceCard, SpaceCardSkeleton } from "./_components/space-card";
+import SearchInput from "./_components/search-input";
+import { SpaceCardSkeleton } from "./_components/space-card";
+import SpaceCardsClient from "./_components/space-cards-client";
 
 export default async function Dashboard() {
   const session = await auth();
@@ -24,15 +25,7 @@ export default async function Dashboard() {
           </Button>
         </Link>
       </div>
-      <div className="focus-within:outline-ring focus-within:ring-ring/50 bg-muted mt-5 flex items-center rounded-md border outline-[1.5px] outline-transparent transition-all">
-        <div className="flex size-10 items-center justify-center">
-          <Search size={18} />
-        </div>
-        <Input
-          className="border-none bg-transparent! px-1 text-base! focus-visible:ring-0"
-          placeholder="Search testimonials by name"
-        />
-      </div>
+      <SearchInput className="mt-5" />
       <div className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
         <Suspense
           fallback={[...Array(3)].map((_, i) => (
@@ -60,5 +53,5 @@ async function SpaceCards({ email }: SpaceCardsProps) {
 
   const { spaces } = user;
 
-  return spaces.map((space) => <SpaceCard key={space.id} space={space} />);
+  return <SpaceCardsClient spaces={spaces} />;
 }
