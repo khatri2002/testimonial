@@ -25,7 +25,15 @@ export default function SpaceCardsClient({ spaces }: SpaceCardsClientProps) {
     return fuse.search(query).map((r) => r.item);
   }, [query, spaces]);
 
-  return filteredSpaces.map((space) => (
-    <SpaceCard key={space.id} space={space} />
-  ));
+  return filteredSpaces.length === 0 ? (
+    <div className="fixed top-1/2 left-1/2 -translate-1/2">
+      <span className="text-muted-foreground italic">No results found.</span>
+    </div>
+  ) : (
+    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+      {filteredSpaces.map((space) => (
+        <SpaceCard key={space.id} space={space} />
+      ))}
+    </div>
+  );
 }

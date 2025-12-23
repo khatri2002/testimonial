@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { auth } from "../auth";
 import SearchInput from "./_components/search-input";
-import { SpaceCardSkeleton } from "./_components/space-card";
+import { SpaceCardsSkeleton } from "./_components/space-card";
 import SpaceCardsClient from "./_components/space-cards-client";
 
 export default async function Dashboard() {
@@ -26,12 +26,9 @@ export default async function Dashboard() {
         </Link>
       </div>
       <SearchInput className="mt-5" />
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-        <Suspense
-          fallback={[...Array(3)].map((_, i) => (
-            <SpaceCardSkeleton key={i} />
-          ))}
-        >
+
+      <div className="mt-6">
+        <Suspense fallback={<SpaceCardsSkeleton />}>
           <SpaceCards email={email} />
         </Suspense>
       </div>
@@ -53,5 +50,18 @@ async function SpaceCards({ email }: SpaceCardsProps) {
 
   const { spaces } = user;
 
-  return <SpaceCardsClient spaces={spaces} />;
+  return spaces.length === 0 ? (
+    <div className="fixed top-1/2 left-1/2 -translate-1/2">
+      <p className="space-y-1 text-center text-nowrap">
+        <span className="block text-lg font-medium">
+          You have no spaces yet.
+        </span>
+        <span className="text-muted-foreground block text-sm">
+          Click the &quot;Create a new Space&quot; button to get started!
+        </span>
+      </p>
+    </div>
+  ) : (
+    <SpaceCardsClient spaces={spaces} />
+  );
 }

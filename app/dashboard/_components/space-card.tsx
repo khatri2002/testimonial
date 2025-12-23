@@ -192,6 +192,12 @@ export function SpaceCard({ space }: SpaceCardProps) {
   );
 }
 
-export function SpaceCardSkeleton() {
-  return <Skeleton className="h-27" />;
+export function SpaceCardsSkeleton() {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+      {[...Array(3)].map((_, id) => (
+        <Skeleton key={id} className="h-27" />
+      ))}
+    </div>
+  );
 }
