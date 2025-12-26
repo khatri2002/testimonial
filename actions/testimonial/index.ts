@@ -375,3 +375,36 @@ export const deleteSpace = async (id: string) => {
   revalidatePath("/dashboard");
   return { success: true, message: "Space deleted" };
 };
+
+export const deleteResponse = async (id: string) => {
+  // authenticate user
+  const session = await auth();
+  if (!session?.user || !session.user.email)
+    return { success: false, message: "Unauthorized" };
+
+  // find user
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    include: {
+      spaces: true,
+    },
+  });
+  if (!user) return { success: false, message: "Unauthorized" };
+
+  // find response
+  const response = await prisma.response.findFirst({
+    where: { id, space: { userId: user.id } },
+    select: { space: true },
+  });
+  if (!response) return { success: false, message: "Response not found" };
+
+  // delete response
+  try {
+    await prisma.response.delete({ where: { id } });
+  } catch (err) {
+    return { success: false, message: "Failed to delete response" };
+  }
+
+  revalidatePath(`/dashboard/${response.space.slug}/inbox`);
+  return { success: true, message: "Response deleted" };
+};

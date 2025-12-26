@@ -29,6 +29,7 @@
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.8.0",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "fuse.js": "^7.1.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.552.0",

@@ -157,9 +157,10 @@ model Space_extra_setting {
 }
 
 model Response {
-  id       String @id @default(uuid())
-  response Json
-  photo    Json?
+  id          String   @id @default(uuid())
+  response    Json
+  photo       Json?
+  submittedAt DateTime @default(now())
 
   space   Space  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
   spaceId String

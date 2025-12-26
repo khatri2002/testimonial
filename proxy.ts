@@ -6,7 +6,9 @@ const publicOnlyRoutes = ["/sign-in", "/sign-up"];
 
 export default async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
-  const isProtectedRoute = protectedRoutes.includes(path);
+  const isProtectedRoute = protectedRoutes.some(
+    (route) => path === route || path.startsWith(`${route}/`),
+  );
   const isPublicOnlyRoute = publicOnlyRoutes.includes(path);
 
   const session = await auth();
