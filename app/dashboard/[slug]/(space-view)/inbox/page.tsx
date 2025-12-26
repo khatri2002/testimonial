@@ -14,16 +14,11 @@ export default async function Inbox({ params }: InboxProps) {
   const email = session?.user?.email;
   if (!email) redirect("/sign-in");
 
-  const user = await prisma.user.findUnique({
-    where: { email },
-    include: { spaces: true },
-  });
-  if (!user) redirect("sign-in");
-
   const { slug } = await params;
-
-  const exist = user.spaces.find((s) => s.slug === slug);
-  if (!exist) redirect("sign-in");
+  const space = await prisma.space.findUnique({
+    where: { slug, user: { email } },
+  });
+  if (!space) redirect("sign-in");
 
   return (
     <Suspense fallback={<InboxContentSkeleton />}>
