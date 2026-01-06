@@ -1,7 +1,23 @@
 import Image from "next/image";
+import { notFound } from "next/navigation";
 import DialogHandler from "./_components/dialog-handler";
+import { getSpaceBySlug } from "./_lib/queries";
 
-export default function TestimonialPage() {
+export const dynamic = "force-dynamic";
+
+interface TestimonialPageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export default async function TestimonialPage({
+  params,
+}: TestimonialPageProps) {
+  const { slug } = await params;
+  const space = await getSpaceBySlug(slug);
+  if (!space) notFound();
+
+  const { header_title, message, question_label, questions } = space;
+
   return (
     <div className="mx-auto flex max-w-150 flex-col items-center">
       <Image
@@ -12,23 +28,23 @@ export default function TestimonialPage() {
         className="rounded"
       />
       <h1 className="mt-10 text-center text-5xl leading-14 font-bold">
-        Shoutout to Indigo!
+        {header_title}
       </h1>
       <p className="text-muted-foreground my-8 text-center text-lg">
-        Your shoutout means a lot to us!
+        {message}
       </p>
       <div className="self-start">
         <span className="before:bg-theme-primary relative before:absolute before:-bottom-3 before:h-1 before:w-1/2 before:rounded-[1px] before:content-['']">
-          QUESTIONS
+          {question_label}
         </span>
         <ul className="text-muted-foreground mt-6 list-disc pl-4">
-          <li>Who are you / what are you working on?</li>
-          <li>How has [our product / service] helped you?</li>
-          <li>What is the best thing about [our product / service]</li>
+          {questions.map((question, index) => (
+            <li key={`question-${index}`}>{question}</li>
+          ))}
         </ul>
       </div>
 
-      <DialogHandler />
+      <DialogHandler space={space} />
     </div>
   );
 }

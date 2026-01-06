@@ -14,14 +14,14 @@ model User {
   email         String    @unique
   emailVerified DateTime?
   image         String?
-  accounts      Account[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  accounts Account[]
+  spaces   Space[]
 }
 
 model Account {
-  userId            String
   type              String
   provider          String
   providerAccountId String
@@ -32,11 +32,87 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  userId String
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([provider, providerAccountId])
+}
+
+enum Theme {
+  dark
+  light
+}
+
+model Space {
+  id                String   @id @default(uuid())
+  slug              String   @unique
+  name              String
+  image             Json
+  header_title      String
+  message           String
+  theme             Theme
+  question_label    String
+  questions         String[]
+  thank_you_title   String
+  thank_you_message String
+  send_btn_text     String
+  verify_email      Boolean
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  userId String
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fields    Field[]
+  responses Response[]
+}
+
+enum Type {
+  textbox
+  textarea
+  checkbox
+  rating
+}
+
+enum Category {
+  core
+  suggested
+  custom
+}
+
+enum Visibility {
+  public
+  private
+}
+
+model Field {
+  id          String     @id @default(uuid())
+  field_key   String     @unique
+  label       String
+  placeholder String?
+  type        Type
+  position    Int
+  validations Json
+  config      Json?
+  category    Category
+  visibility  Visibility @default(public)
+  active      Boolean
+
+  spaceId String
+
+  space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+}
+
+model Response {
+  id           String   @id @default(uuid())
+  answers      Json
+  submitted_at DateTime @default(now())
+
+  spaceId String
+
+  space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
 }

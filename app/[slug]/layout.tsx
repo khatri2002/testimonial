@@ -1,18 +1,31 @@
 import ThemeImage from "@/components/theme-image";
 import { ThemeProvider } from "@/components/theme-provider";
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { getSpaceBySlug } from "./_lib/queries";
+
+export const dynamic = "force-dynamic";
 
 interface TestimonialLayoutProps {
   children: React.ReactNode;
+  params: Promise<{ slug: string }>;
 }
 
-export default function TestimonialLayout({
+export default async function TestimonialLayout({
   children,
+  params,
 }: TestimonialLayoutProps) {
+  const { slug } = await params;
+
+  const space = await getSpaceBySlug(slug);
+  if (!space) notFound();
+
+  const { theme } = space;
+
   return (
     <ThemeProvider
       attribute="class"
-      defaultTheme="dark"
+      defaultTheme={theme}
       enableSystem
       disableTransitionOnChange
     >

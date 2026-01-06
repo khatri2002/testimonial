@@ -28,39 +28,189 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { FieldConfig, FieldValidations } from "@/lib/types";
+import { buildTestimonialSchema } from "@/lib/utils";
+import {
+  Field as FieldType,
+  Prisma,
+} from "@/prisma/src/generated/prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Info } from "lucide-react";
+import { Fragment } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { testimonialFormSchema } from "../_lib/schema";
-import { TestimonialFormSchema } from "../_lib/schema.types";
 import DialogLoadingOverlay from "./dialog-loading-overlay";
 
 interface FormDialogProps {
+  space: Prisma.SpaceGetPayload<{ include: { fields: true } }>;
   open: boolean;
   handleOpenChange: (open: boolean) => void;
-  onSubmit: (data: TestimonialFormSchema) => void;
+  onSubmit: (data: Record<string, unknown>) => void;
 }
 
 export default function FormDialog({
+  space,
   open,
   handleOpenChange,
   onSubmit,
 }: FormDialogProps) {
+  const { fields } = space;
+  const { schema, defaultValues } = buildTestimonialSchema(fields);
+
   const {
     control,
     handleSubmit,
     formState: { isSubmitting },
-  } = useForm<TestimonialFormSchema>({
-    resolver: zodResolver(testimonialFormSchema),
-    defaultValues: {
-      rating: 0,
-      testimonial: "",
-      name: "",
-      email: "",
-      consent: false,
-    },
+  } = useForm({
+    resolver: zodResolver(schema),
+    defaultValues,
     shouldFocusError: false,
   });
+
+  const renderField = (field: FieldType) => {
+    const {
+      field_key,
+      label,
+      placeholder,
+      type,
+      config: rawConfig,
+      validations: rawValidations,
+    } = field;
+    const config = rawConfig as FieldConfig;
+    const validations = rawValidations as FieldValidations;
+
+    switch (type) {
+      case "rating":
+        return (
+          <Controller
+            name={field_key}
+            control={control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <div className="flex justify-center">
+                  <Rating value={field.value} onValueChange={field.onChange}>
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <RatingButton
+                        key={index}
+                        className="text-theme-primary"
+                      />
+                    ))}
+                  </Rating>
+                </div>
+                {fieldState.invalid && (
+                  <FieldError
+                    className="text-center"
+                    errors={[fieldState.error]}
+                  />
+                )}
+              </Field>
+            )}
+          />
+        );
+
+      case "textarea":
+        return (
+          <Controller
+            name={field_key}
+            control={control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <InputGroup>
+                  <InputGroupTextarea
+                    {...field}
+                    id={field_key}
+                    aria-invalid={fieldState.invalid}
+                    placeholder={placeholder || undefined}
+                    maxLength={
+                      (config?.characterCounter?.enforceLimit &&
+                        config.characterCounter.maxCharacters) ||
+                      undefined
+                    }
+                    className="min-h-30!"
+                  />
+                  {config?.characterCounter?.enabled && (
+                    <InputGroupAddon align="block-end">
+                      <InputGroupText className="text-muted-foreground text-xs">
+                        {field.value.length}/
+                        {config.characterCounter.maxCharacters} characters
+                      </InputGroupText>
+                    </InputGroupAddon>
+                  )}
+                </InputGroup>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        );
+
+      case "textbox":
+        return (
+          <Controller
+            name={field_key}
+            control={control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field_key} className="w-fit!">
+                  {label}
+                  {validations?.required && <span>*</span>}
+                  {config?.info && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info
+                          size={15}
+                          className="text-foreground cursor-pointer"
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{config.info}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                </FieldLabel>
+
+                <Input
+                  {...field}
+                  id={field_key}
+                  aria-invalid={fieldState.invalid}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        );
+
+      case "checkbox":
+        return (
+          <Controller
+            name={field_key}
+            control={control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <div className="flex gap-3">
+                  <Checkbox
+                    id={field_key}
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                  <FieldLabel htmlFor={field_key}>
+                    {label} {validations?.required && "*"}
+                  </FieldLabel>
+                </div>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        );
+
+      default:
+        break;
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -74,131 +224,13 @@ export default function FormDialog({
               Write testimonial to Indigo
             </DialogDescription>
           </DialogHeader>
-          <FieldGroup className="gap-4">
-            <Controller
-              name="rating"
-              control={control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <div className="flex justify-center">
-                    <Rating value={field.value} onValueChange={field.onChange}>
-                      {Array.from({ length: 5 }).map((_, index) => (
-                        <RatingButton
-                          key={index}
-                          className="text-theme-primary"
-                        />
-                      ))}
-                    </Rating>
-                  </div>
-                  {fieldState.invalid && (
-                    <FieldError
-                      className="text-center"
-                      errors={[fieldState.error]}
-                    />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              name="testimonial"
-              control={control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <InputGroup>
-                    <InputGroupTextarea
-                      {...field}
-                      id="testimonial"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Write your testimonial here..."
-                      maxLength={100}
-                      className="min-h-30!"
-                    />
-                    <InputGroupAddon align="block-end">
-                      <InputGroupText className="text-muted-foreground text-xs">
-                        {field.value.length}/100 characters
-                      </InputGroupText>
-                    </InputGroupAddon>
-                  </InputGroup>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              name="name"
-              control={control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="name" className="w-fit!">
-                    Name <span>*</span>
-                  </FieldLabel>
-                  <Input
-                    {...field}
-                    id="name"
-                    aria-invalid={fieldState.invalid}
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              name="email"
-              control={control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="email" className="w-fit!">
-                    Email
-                    <span>*</span>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Info
-                          size={15}
-                          className="text-foreground cursor-pointer"
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Your email will not be shared.</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </FieldLabel>
 
-                  <Input
-                    {...field}
-                    id="email"
-                    aria-invalid={fieldState.invalid}
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              name="consent"
-              control={control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <div className="flex gap-3">
-                    <Checkbox
-                      id="consent"
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                    <FieldLabel htmlFor="consent">
-                      I give permission to use this testimonial across social
-                      channels and other marketing efforts. *
-                    </FieldLabel>
-                  </div>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
+          <FieldGroup className="gap-4">
+            {fields.map((field) => (
+              <Fragment key={field.id}>{renderField(field)}</Fragment>
+            ))}
           </FieldGroup>
+
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
