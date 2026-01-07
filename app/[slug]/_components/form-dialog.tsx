@@ -36,11 +36,16 @@ import {
 } from "@/prisma/src/generated/prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Info } from "lucide-react";
-import { Fragment } from "react";
+import { Fragment, useImperativeHandle } from "react";
 import { Controller, useForm } from "react-hook-form";
 import DialogLoadingOverlay from "./dialog-loading-overlay";
 
+export interface FormDialogRef {
+  clearForm: () => void;
+}
+
 interface FormDialogProps {
+  ref?: React.Ref<FormDialogRef>;
   space: Prisma.SpaceGetPayload<{ include: { fields: true } }>;
   open: boolean;
   handleOpenChange: (open: boolean) => void;
@@ -48,6 +53,7 @@ interface FormDialogProps {
 }
 
 export default function FormDialog({
+  ref,
   space,
   open,
   handleOpenChange,
@@ -60,11 +66,17 @@ export default function FormDialog({
     control,
     handleSubmit,
     formState: { isSubmitting },
+    reset,
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues,
     shouldFocusError: false,
   });
+
+  // expose clearForm method to parent via ref
+  useImperativeHandle(ref, () => ({
+    clearForm: () => reset(),
+  }));
 
   const renderField = (field: FieldType) => {
     const {
@@ -214,7 +226,11 @@ export default function FormDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+      <DialogContent
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        onInteractOutside={(e) => isSubmitting && e.preventDefault()} // prevent closing dialog on outside click when submitting
+        onEscapeKeyDown={(e) => isSubmitting && e.preventDefault()} // prevent closing dialog on escape key when submitting
+      >
         <DialogLoadingOverlay isLoading={isSubmitting} />
 
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>

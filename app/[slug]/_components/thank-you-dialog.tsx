@@ -8,17 +8,22 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Space } from "@/prisma/src/generated/prisma/client";
 import Image from "next/image";
 
 interface ThankYouDialogProps {
+  space: Space;
   open: boolean;
   handleOpenChange: (open: boolean) => void;
 }
 
 export function ThankYouDialog({
+  space,
   open,
   handleOpenChange,
 }: ThankYouDialogProps) {
+  const { thank_you_title, thank_you_message } = space;
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="[&>button]:hidden">
@@ -31,11 +36,10 @@ export function ThankYouDialog({
         />
         <DialogHeader>
           <DialogTitle className="text-center text-xl">
-            Thank you for your response
+            {thank_you_title}
           </DialogTitle>
           <DialogDescription className="text-center">
-            Thank you for taking your time out to submit the form. We really
-            appreciate it.
+            {thank_you_message}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
