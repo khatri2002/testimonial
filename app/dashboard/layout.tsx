@@ -20,18 +20,20 @@ export default async function Dashboard({ children }: DashboardProps) {
       enableSystem
       disableTransitionOnChange
     >
-      <nav className="flex items-center justify-between px-12 py-4">
-        <Link href="/dashboard" className="relative block h-10 w-45">
-          <ThemeImage
-            darkSrc="/testimonial-dark_theme-logo.svg"
-            lightSrc="/testimonial-light_theme-logo.svg"
-            alt="testimonial-logo"
-            fill
-          />
-        </Link>
-        <UserMenu user={session.user} />
-      </nav>
-      <main>{children}</main>
+      <div className="flex min-h-screen flex-col">
+        <nav className="flex items-center justify-between border-b px-12 py-4">
+          <Link href="/dashboard" className="relative block h-10 w-45">
+            <ThemeImage
+              darkSrc="/testimonial-dark_theme-logo.svg"
+              lightSrc="/testimonial-light_theme-logo.svg"
+              alt="testimonial-logo"
+              fill
+            />
+          </Link>
+          <UserMenu user={session.user} />
+        </nav>
+        <main className="flex flex-[1_1_0] flex-col">{children}</main>
+      </div>
     </ThemeProvider>
   );
 }

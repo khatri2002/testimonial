@@ -55,7 +55,7 @@ model Space {
   header_title      String
   message           String
   theme             Theme
-  question_label    String
+  question_label    String?
   questions         String[]
   thank_you_title   String
   thank_you_message String
@@ -91,7 +91,7 @@ enum Visibility {
 
 model Field {
   id          String     @id @default(uuid())
-  field_key   String     @unique
+  field_key   String
   label       String
   placeholder String?
   type        Type
@@ -100,7 +100,7 @@ model Field {
   config      Json?
   category    Category
   visibility  Visibility @default(public)
-  active      Boolean
+  active      Boolean    @default(true)
 
   spaceId String
 

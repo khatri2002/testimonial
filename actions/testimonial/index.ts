@@ -1,14 +1,16 @@
 "use server";
 
+import { auth } from "@/auth";
 import { OTP_LENGTH } from "@/lib/config";
 import { sendMail } from "@/lib/mail";
 import { getRedisClient } from "@/lib/redis";
+import { createSpaceSchema } from "@/lib/schema";
 import { buildTestimonialSchema } from "@/lib/utils";
 import { prisma } from "@/prisma";
 import { Prisma } from "@/prisma/src/generated/prisma/client";
 import { emailSchema } from "./lib/schema";
 import { OtpEmailTemplate } from "./lib/templates";
-import { generateSecureOtp } from "./lib/utils";
+import { generateSecureOtp, uploadFileToCloudinary } from "./lib/utils";
 
 export const sendOtp = async (email: string) => {
   // validate email
@@ -84,4 +86,183 @@ export const saveResponse = async (
   }
 
   return { success: true, message: "Response saved" };
+};
+
+export const isSlugAvailable = async (slug: string) => {
+  try {
+    const space = await prisma.space.findUnique({ where: { slug } });
+    if (space) return { success: true, available: false };
+    return { success: true, available: true };
+  } catch (err) {
+    return { success: false };
+  }
+};
+
+export const createNewSpace = async (fd: FormData) => {
+  // authenticate user
+  const session = await auth();
+  if (!session?.user || !session.user.email)
+    return { success: false, message: "Unauthorized" };
+
+  // fetch user
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+  });
+  if (!user) return { success: false, message: "User not found" };
+
+  // validate data
+  let data;
+  try {
+    const basics = JSON.parse(fd.get("basics") as string);
+    const prompts = JSON.parse(fd.get("prompts") as string);
+    const thank_you_screen = JSON.parse(fd.get("thank_you_screen") as string);
+    const extra_settings = JSON.parse(fd.get("extra_settings") as string);
+    const image = fd.get("image") as string;
+    const rawData = {
+      basics: { ...basics, image },
+      prompts,
+      thank_you_screen,
+      extra_settings,
+    };
+
+    const { success, data: parsedData } = createSpaceSchema.safeParse(rawData);
+    if (!success) return { success: false, message: "Invalid data" };
+
+    data = parsedData;
+  } catch (err) {
+    return { success: false, message: "Invalid data" };
+  }
+
+  // upload image
+  let imageRes;
+  try {
+    imageRes = await uploadFileToCloudinary(data.basics.image);
+  } catch (err) {
+    return { success: false, message: "Failed to upload image" };
+  }
+
+  // create space
+  const {
+    basics: {
+      slug,
+      name,
+      header_title,
+      message,
+      dark_mode,
+      collect_star_rating,
+      extra_information,
+    },
+    prompts: { question_label, questions },
+    thank_you_screen: { thank_you_title, thank_you_message },
+    extra_settings: {
+      send_btn_text,
+      verify_email,
+      max_testimonial_chars,
+      consent_display,
+      consent_statement,
+    },
+  } = data;
+
+  const fields: Omit<Prisma.FieldCreateWithoutSpaceInput, "position">[] = [];
+  // helper to add field with position
+  const addField = (
+    field: Omit<Prisma.FieldCreateWithoutSpaceInput, "position">,
+  ) => fields.push(field);
+
+  // rating field
+  if (collect_star_rating)
+    addField({
+      field_key: "rating",
+      label: "Rating",
+      type: "rating",
+      validations: { type: "number", required: true },
+      category: "core",
+    });
+
+  // testimonial field
+  addField({
+    field_key: "testimonial",
+    label: "Testimonial",
+    placeholder: "Write your testimonial here...",
+    type: "textarea",
+    validations: { type: "string", required: true },
+    config: max_testimonial_chars
+      ? {
+          characterCounter: {
+            enabled: true,
+            enforceLimit: true,
+            maxCharacters: max_testimonial_chars,
+          },
+        }
+      : undefined,
+    category: "core",
+  });
+
+  // extra information fields
+  extra_information.forEach(({ disabled, ...rest }) => addField({ ...rest }));
+
+  // ensure email field if verify_email is true
+  if (
+    verify_email &&
+    !extra_information.some(
+      ({ field_key, active }) => field_key === "email" && active,
+    )
+  )
+    addField({
+      field_key: "email",
+      label: "Email",
+      type: "textbox",
+      validations: { type: "email", required: true },
+      config: { info: "Your email will not be shared." },
+      category: "core",
+      visibility: "private",
+    });
+
+  // consent field
+  if (consent_display !== "hidden")
+    addField({
+      field_key: "consent",
+      label: consent_statement as string,
+      type: "checkbox",
+      validations: {
+        type: "boolean",
+        required: consent_display === "required",
+      },
+      category: "core",
+    });
+
+  // add position to fields
+  const fieldsWithPosition = fields.map((field, index) => ({
+    ...field,
+    position: index + 1,
+  }));
+
+  // save to database
+  try {
+    await prisma.space.create({
+      data: {
+        slug,
+        name,
+        image: imageRes,
+        header_title,
+        message,
+        theme: dark_mode ? "dark" : "light",
+        question_label,
+        questions: questions.map(({ question }) => question),
+        thank_you_title,
+        thank_you_message,
+        send_btn_text,
+        verify_email,
+        userId: user.id,
+        fields: {
+          create: fieldsWithPosition,
+        },
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return { success: false, message: "Failed to save space" };
+  }
+
+  return { success: true, message: "Space created" };
 };
