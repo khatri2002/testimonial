@@ -1,6 +1,5 @@
 "use client";
 
-import { isSlugAvailable } from "@/actions/testimonial";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -40,53 +39,32 @@ import {
   Trash,
 } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useMemo, useRef } from "react";
 import {
   Controller,
   useFieldArray,
   useFormContext,
   useWatch,
 } from "react-hook-form";
-import { useDebounce } from "use-debounce";
-import { generateSlug } from "../_lib/utils";
 
-export default function BasicsTabContent() {
-  const {
-    control,
-    setValue,
-    trigger,
-    formState: { errors },
-    resetField,
-  } = useFormContext<CreateSpaceSchema>();
-
-  const name = useWatch({ control, name: "basics.name" });
-  const slug = useWatch({ control, name: "basics.slug" });
-  const [debouncedSlug] = useDebounce(slug, 700);
-
-  useEffect(() => {
-    if (!name) return;
-
-    const generatedSlug = generateSlug(name);
-    setValue("basics.slug", generatedSlug, { shouldValidate: true });
-  }, [name, setValue]);
-
-  const [isPending, startTransition] = useTransition();
-  const [slugAvailableRes, setSlugAvailableRes] = useState<{
+interface BasicsTabContentProps {
+  isCheckingSlug: boolean;
+  slugAvailableRes: {
     success: boolean;
     available?: boolean;
-  } | null>(null);
+  } | null;
+  slugAvailability: boolean;
+}
 
-  const slugAvailability = debouncedSlug && !errors.basics?.slug; // only check availability if slug is valid
-
-  useEffect(() => {
-    if (slugAvailability)
-      startTransition(() => {
-        isSlugAvailable(debouncedSlug).then((res) => setSlugAvailableRes(res));
-      });
-  }, [debouncedSlug, slugAvailability]);
+export default function BasicsTabContent({
+  isCheckingSlug,
+  slugAvailableRes,
+  slugAvailability,
+}: BasicsTabContentProps) {
+  const { control, trigger, resetField } = useFormContext<CreateSpaceSchema>();
 
   const renderSlugAddOn = () => {
-    if (isPending) return <Spinner />;
+    if (isCheckingSlug) return <Spinner />;
     if (!slugAvailability || !slugAvailableRes) return;
     if (!slugAvailableRes.success)
       return (
