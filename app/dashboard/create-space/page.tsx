@@ -18,13 +18,13 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
-import BasicsTabContent from "./_components/basics-tab-content";
-import ExtraSettingsContent from "./_components/extra-settings-content";
 import LoadingOverlay from "./_components/loading-overlay";
-import PagePreview from "./_components/page-preview";
-import PromptsTabContent from "./_components/prompts-tab-content";
-import ThankYouScreenPreview from "./_components/thank-you-screen-preview";
-import ThankYouTabContent from "./_components/thank-you-tab-content";
+import PagePreview from "./_components/preview/page-preview";
+import ThankYouScreenPreview from "./_components/preview/thank-you-screen-preview";
+import BasicsTabContent from "./_components/tab-content/basics-tab-content";
+import ExtraSettingsContent from "./_components/tab-content/extra-settings-content";
+import PromptsTabContent from "./_components/tab-content/prompts-tab-content";
+import ThankYouTabContent from "./_components/tab-content/thank-you-tab-content";
 import { generateSlug } from "./_lib/utils";
 
 export default function CreateSpace() {
