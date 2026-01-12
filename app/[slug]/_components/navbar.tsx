@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function TestimonialNavbar() {
   return (
-    <nav className="px-12 py-4">
+    <nav className="px-8 py-2 sm:px-12 sm:py-4">
       <Link href="/" className="relative block h-10 w-45">
         <ThemeImage
           darkSrc="/testimonial-dark_theme-logo.svg"

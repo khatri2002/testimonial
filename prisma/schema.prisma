@@ -51,12 +51,13 @@ model Space {
   id                String   @id @default(uuid())
   slug              String   @unique
   name              String
-  image             Json
+  image             Json?
   header_title      String
   message           String
   theme             Theme
   question_label    String?
   questions         String[]
+  thank_you_image   Json?
   thank_you_title   String
   thank_you_message String
   send_btn_text     String

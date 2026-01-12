@@ -117,11 +117,12 @@ export const createNewSpace = async (fd: FormData) => {
     const prompts = JSON.parse(fd.get("prompts") as string);
     const thank_you_screen = JSON.parse(fd.get("thank_you_screen") as string);
     const extra_settings = JSON.parse(fd.get("extra_settings") as string);
-    const image = fd.get("image") as string;
+    const image = fd.get("image") ?? undefined;
+    const thank_you_image = fd.get("thank_you_image") ?? undefined;
     const rawData = {
       basics: { ...basics, image },
       prompts,
-      thank_you_screen,
+      thank_you_screen: { ...thank_you_screen, thank_you_image },
       extra_settings,
     };
 
@@ -133,12 +134,23 @@ export const createNewSpace = async (fd: FormData) => {
     return { success: false, message: "Invalid data" };
   }
 
-  // upload image
-  let imageRes;
-  try {
-    imageRes = await uploadFileToCloudinary(data.basics.image);
-  } catch (err) {
-    return { success: false, message: "Failed to upload image" };
+  // upload images if provided
+  let imageRes, thankYouImageRes;
+  if (data.basics.image) {
+    try {
+      imageRes = await uploadFileToCloudinary(data.basics.image);
+    } catch (err) {
+      return { success: false, message: "Failed to upload image" };
+    }
+  }
+  if (data.thank_you_screen.thank_you_image) {
+    try {
+      thankYouImageRes = await uploadFileToCloudinary(
+        data.thank_you_screen.thank_you_image,
+      );
+    } catch (err) {
+      return { success: false, message: "Failed to upload image" };
+    }
   }
 
   // create space
@@ -249,6 +261,7 @@ export const createNewSpace = async (fd: FormData) => {
         theme: dark_mode ? "dark" : "light",
         question_label,
         questions: questions.map(({ question }) => question),
+        thank_you_image: thankYouImageRes,
         thank_you_title,
         thank_you_message,
         send_btn_text,

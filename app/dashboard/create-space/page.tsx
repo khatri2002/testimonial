@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useDisableScroll from "@/lib/hooks/use-disable-scroll";
 import { createSpaceSchema } from "@/lib/schema";
 import { CreateSpaceSchema } from "@/lib/schema.types";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
@@ -20,7 +21,9 @@ import { useDebounce } from "use-debounce";
 import BasicsTabContent from "./_components/basics-tab-content";
 import ExtraSettingsContent from "./_components/extra-settings-content";
 import LoadingOverlay from "./_components/loading-overlay";
+import PagePreview from "./_components/page-preview";
 import PromptsTabContent from "./_components/prompts-tab-content";
+import ThankYouScreenPreview from "./_components/thank-you-screen-preview";
 import ThankYouTabContent from "./_components/thank-you-tab-content";
 import { generateSlug } from "./_lib/utils";
 
@@ -110,10 +113,13 @@ export default function CreateSpace() {
     formState: { errors },
   } = methods;
 
+  const [activeTab, setActiveTab] = useState("basics");
+
   const [isCreating, startCreateSpace] = useTransition();
 
   const name = useWatch({ control, name: "basics.name" });
   const slug = useWatch({ control, name: "basics.slug" });
+  const dark_mode = useWatch({ control, name: "basics.dark_mode" });
   const [debouncedSlug] = useDebounce(slug, 700);
 
   useEffect(() => {
@@ -155,16 +161,17 @@ export default function CreateSpace() {
       const {
         basics: { image, ...restBasics },
         prompts,
-        thank_you_screen,
+        thank_you_screen: { thank_you_image, ...restThankYouScreen },
         extra_settings,
       } = data;
 
       const fd = new FormData();
       fd.append("basics", JSON.stringify(restBasics));
       fd.append("prompts", JSON.stringify(prompts));
-      fd.append("thank_you_screen", JSON.stringify(thank_you_screen));
+      fd.append("thank_you_screen", JSON.stringify(restThankYouScreen));
       fd.append("extra_settings", JSON.stringify(extra_settings));
-      fd.append("image", image);
+      if (image) fd.append("image", image);
+      if (thank_you_image) fd.append("thank_you_image", thank_you_image);
 
       try {
         const { success, message } = await createNewSpace(fd);
@@ -192,7 +199,11 @@ export default function CreateSpace() {
               className="mx-auto w-md"
               onSubmit={handleSubmit(onSubmit, onError)}
             >
-              <Tabs defaultValue="basics">
+              <Tabs
+                defaultValue="basics"
+                value={activeTab}
+                onValueChange={(val) => setActiveTab(val)}
+              >
                 <div className="flex justify-center">
                   <TabsList>
                     <TabsTrigger value="basics">Basics</TabsTrigger>
@@ -232,8 +243,18 @@ export default function CreateSpace() {
             </form>
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={50} className="overflow-y-auto! p-4">
-            preview
+          <ResizablePanel
+            defaultSize={50}
+            className={cn("bg-background @container overflow-y-auto! p-4", {
+              dark: dark_mode,
+              light: !dark_mode,
+            })}
+          >
+            {activeTab === "thank_you_screen" ? (
+              <ThankYouScreenPreview />
+            ) : (
+              <PagePreview />
+            )}
           </ResizablePanel>
         </ResizablePanelGroup>
       </FormProvider>

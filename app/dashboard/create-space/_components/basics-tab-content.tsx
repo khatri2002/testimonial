@@ -201,9 +201,7 @@ export default function BasicsTabContent({
           control={control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="basics.image">
-                Image <span>*</span>
-              </FieldLabel>
+              <FieldLabel htmlFor="basics.image">Image</FieldLabel>
               <div className="flex items-center gap-4">
                 <div className="bg-muted relative size-12 rounded-full">
                   {previewImage && (

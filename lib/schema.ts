@@ -29,7 +29,7 @@ const basicsSchema = z.object({
     .regex(/^(?!-)(?!.*-$).+/, {
       error: "URL cannot start or end with a hyphen",
     }),
-  image: z.instanceof(File, { error: "Image is required" }),
+  image: z.instanceof(File).optional(),
   header_title: z.string().trim().nonempty("Header title is required"),
   message: z.string().trim().nonempty("Message is required"),
   collect_star_rating: z.boolean(),
@@ -57,6 +57,7 @@ const promptsSchema = z
   });
 
 const thankYouSchema = z.object({
+  thank_you_image: z.instanceof(File).optional(),
   thank_you_title: z.string().trim().nonempty("Thank you title is required"),
   thank_you_message: z
     .string()

@@ -49,11 +49,11 @@ export default function DialogHandler({ space }: DialogHandlerProps) {
   return (
     <>
       <Button
-        className="bg-theme-primary hover:bg-theme-primary/85 active:outline-theme-primary/50 mt-20 h-11 w-26 text-lg font-semibold outline-1 outline-offset-3 outline-transparent outline-solid active:translate-y-0.5"
+        className="bg-theme-primary hover:bg-theme-primary/85 active:outline-theme-primary/50 h-9 font-semibold outline-1 outline-offset-3 outline-transparent outline-solid active:translate-y-0.5 sm:h-11 sm:text-lg"
         onClick={() => setActiveDialog("form")}
       >
         {send_btn_text}
-        <Send className="size-5" />
+        <Send className="size-4 sm:size-5" />
       </Button>
       <FormDialog
         ref={formDialogRef}
