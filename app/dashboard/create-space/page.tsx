@@ -40,7 +40,6 @@ export default function CreateSpace() {
         message: "",
         collect_star_rating: true,
         extra_information: [
-          // TODO: maybe taken from some config
           {
             field_key: "name",
             label: "Name",

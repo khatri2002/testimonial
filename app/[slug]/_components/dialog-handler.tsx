@@ -64,9 +64,7 @@ export default function DialogHandler({ space }: DialogHandlerProps) {
           setFormResponse(data);
           if (verify_email) {
             try {
-              const { success, message } = await sendOtp(
-                String(data.email), //TODO: 'email' maybe taken from some constant/config
-              );
+              const { success, message } = await sendOtp(String(data.email));
               if (!success) {
                 toast.error("Oops! Something went wrong", {
                   description: message,
@@ -85,7 +83,7 @@ export default function DialogHandler({ space }: DialogHandlerProps) {
         }}
       />
       <OtpDialog
-        email={String(formResponse?.email ?? "")} //TODO: 'email' maybe taken from some constant/config
+        email={String(formResponse?.email ?? "")}
         open={activeDialog === "otp"}
         handleOpenChange={(open) => setActiveDialog(open ? "otp" : null)}
         handleBack={() => setActiveDialog("form")}

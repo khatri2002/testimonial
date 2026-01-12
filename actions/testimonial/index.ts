@@ -65,7 +65,7 @@ export const saveResponse = async (
 
     try {
       const client = await getRedisClient();
-      const email = data.email; //TODO: 'email' maybe taken from some constant/config
+      const email = data.email;
       const savedOtp = await client.get(`otp-${email}`);
       if (otp !== savedOtp) return { success: false, message: "Invalid OTP" };
 

@@ -1,8 +1,7 @@
 import * as z from "zod";
 
 const fieldValidationsSchema = z.object({
-  // TODO: maybe dynamic
-  type: z.enum(["number", "string", "email", "boolean"]), // TODO: maybe dynamic
+  type: z.enum(["number", "string", "email", "boolean"]),
   required: z.boolean(),
   maxLength: z.number().optional(),
   minLength: z.number().optional(),
@@ -11,9 +10,9 @@ const fieldValidationsSchema = z.object({
 const fieldSchema = z.object({
   field_key: z.string().trim().nonempty(),
   label: z.string().trim().nonempty(),
-  type: z.enum(["textbox", "textarea", "checkbox", "rating"]), // TODO: maybe dynamic
+  type: z.enum(["textbox", "textarea", "checkbox", "rating"]),
   validations: fieldValidationsSchema,
-  category: z.enum(["core", "suggested", "custom"]), // TODO: maybe dynamic
+  category: z.enum(["core", "suggested", "custom"]),
   active: z.boolean(),
   disabled: z.boolean(),
 });
