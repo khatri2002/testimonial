@@ -23,6 +23,7 @@ export default async function EditSpace({ params }: EditSpaceProps) {
   if (!space) notFound();
 
   const {
+    id,
     name,
     image: rawImage,
     header_title,
@@ -86,6 +87,7 @@ export default async function EditSpace({ params }: EditSpaceProps) {
 
   return (
     <SpaceFormClient
+      id={id}
       defaultValues={defaultValues}
       previewImages={previewImages}
       storedSlug={slug}

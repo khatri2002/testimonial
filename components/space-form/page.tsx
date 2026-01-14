@@ -130,7 +130,12 @@ export default function SpaceForm(props: SpaceFormProps) {
 
   return (
     <>
-      <LoadingOverlay isLoading={isLoading} />
+      <LoadingOverlay
+        isLoading={isLoading}
+        loadingText={
+          mode === "create" ? "Creating space..." : "Editing space..."
+        }
+      />
       <FormProvider {...methods}>
         <ResizablePanelGroup direction="horizontal" className="flex-[1_1_0]">
           <ResizablePanel defaultSize={50} className="overflow-y-auto! p-4">

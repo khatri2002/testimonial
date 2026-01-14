@@ -3,9 +3,13 @@ import { cn } from "@/lib/utils";
 
 interface LoadingOverlayProps {
   isLoading: boolean;
+  loadingText: string;
 }
 
-export default function LoadingOverlay({ isLoading }: LoadingOverlayProps) {
+export default function LoadingOverlay({
+  isLoading,
+  loadingText,
+}: LoadingOverlayProps) {
   return (
     <div
       className={cn(
@@ -14,7 +18,7 @@ export default function LoadingOverlay({ isLoading }: LoadingOverlayProps) {
       )}
     >
       <TextShimmer className="font-mono text-xl" duration={1.5}>
-        Creating space...
+        {loadingText}
       </TextShimmer>
     </div>
   );
