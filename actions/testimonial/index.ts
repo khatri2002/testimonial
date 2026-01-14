@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { OTP_LENGTH } from "@/lib/config";
 import { sendMail } from "@/lib/mail";
 import { getRedisClient } from "@/lib/redis";
-import { createSpaceSchema } from "@/lib/schema";
+import { spaceSchema } from "@/lib/schema";
 import { buildTestimonialSchema } from "@/lib/utils";
 import { prisma } from "@/prisma";
 import { Prisma } from "@/prisma/src/generated/prisma/client";
@@ -126,7 +126,7 @@ export const createNewSpace = async (fd: FormData) => {
       extra_settings,
     };
 
-    const { success, data: parsedData } = createSpaceSchema.safeParse(rawData);
+    const { success, data: parsedData } = spaceSchema.safeParse(rawData);
     if (!success) return { success: false, message: "Invalid data" };
 
     data = parsedData;
@@ -211,7 +211,7 @@ export const createNewSpace = async (fd: FormData) => {
   });
 
   // extra information fields
-  extra_information.forEach(({ disabled, ...rest }) => addField({ ...rest }));
+  extra_information.forEach((field) => addField(field));
 
   // ensure email field if verify_email is true
   if (
@@ -234,7 +234,7 @@ export const createNewSpace = async (fd: FormData) => {
   if (consent_display !== "hidden")
     addField({
       field_key: "consent",
-      label: consent_statement as string,
+      label: consent_statement || "",
       type: "checkbox",
       validations: {
         type: "boolean",
@@ -266,6 +266,10 @@ export const createNewSpace = async (fd: FormData) => {
         thank_you_message,
         send_btn_text,
         verify_email,
+        collect_star_rating,
+        max_testimonial_chars: Number(max_testimonial_chars) || null,
+        consent_display,
+        consent_statement,
         userId: user.id,
         fields: {
           create: fieldsWithPosition,
@@ -273,7 +277,6 @@ export const createNewSpace = async (fd: FormData) => {
       },
     });
   } catch (err) {
-    console.log(err);
     return { success: false, message: "Failed to save space" };
   }
 

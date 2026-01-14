@@ -6,12 +6,12 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { CreateSpaceSchema } from "@/lib/schema.types";
+import { SpaceSchema } from "@/lib/schema.types";
 import { CirclePlus, EllipsisVertical, Trash } from "lucide-react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 
 export default function PromptsTabContent() {
-  const { control, trigger } = useFormContext<CreateSpaceSchema>();
+  const { control, trigger } = useFormContext<SpaceSchema>();
 
   const { fields, remove, append } = useFieldArray({
     control,

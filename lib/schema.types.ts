@@ -1,4 +1,4 @@
 import * as z from "zod";
-import { createSpaceSchema } from "./schema";
+import { spaceSchema } from "./schema";
 
-export type CreateSpaceSchema = z.infer<typeof createSpaceSchema>;
+export type SpaceSchema = z.infer<typeof spaceSchema>;

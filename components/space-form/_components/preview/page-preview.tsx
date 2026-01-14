@@ -1,18 +1,20 @@
 import { Button } from "@/components/ui/button";
-import { CreateSpaceSchema } from "@/lib/schema.types";
+import { SpaceSchema } from "@/lib/schema.types";
 import { Send } from "lucide-react";
 import Image from "next/image";
 import { useFormContext } from "react-hook-form";
 
-export default function PagePreview() {
-  const { watch } = useFormContext<CreateSpaceSchema>();
+interface PagePreviewProps {
+  previewImage?: string;
+}
+
+export default function PagePreview({ previewImage }: PagePreviewProps) {
+  const { watch } = useFormContext<SpaceSchema>();
   const {
-    basics: { image, header_title, message },
+    basics: { header_title, message },
     prompts: { question_label, questions },
     extra_settings: { send_btn_text },
   } = watch();
-
-  const previewImage = image && URL.createObjectURL(image);
 
   return (
     <div className="mx-auto flex max-w-140 min-w-93.75 flex-col items-center">

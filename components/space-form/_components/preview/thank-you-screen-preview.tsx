@@ -1,23 +1,27 @@
 import { Button } from "@/components/ui/button";
-import { CreateSpaceSchema } from "@/lib/schema.types";
+import { SpaceSchema } from "@/lib/schema.types";
 import Image from "next/image";
 import { useFormContext, useWatch } from "react-hook-form";
 
-export default function ThankYouScreenPreview() {
-  const { control } = useFormContext<CreateSpaceSchema>();
+interface ThankYouScreenPreviewProps {
+  previewThankYouImage?: string;
+}
 
-  const { thank_you_image, thank_you_title, thank_you_message } = useWatch({
+export default function ThankYouScreenPreview({
+  previewThankYouImage,
+}: ThankYouScreenPreviewProps) {
+  const { control } = useFormContext<SpaceSchema>();
+
+  const { thank_you_title, thank_you_message } = useWatch({
     control,
     name: "thank_you_screen",
   });
 
-  const previewImage = thank_you_image && URL.createObjectURL(thank_you_image);
-
   return (
     <div className="mx-auto grid max-w-[calc(100%-2rem)] min-w-93.75 gap-4 rounded-lg border p-6 @sm:max-w-lg">
-      {previewImage && (
+      {previewThankYouImage && (
         <Image
-          src={previewImage}
+          src={previewThankYouImage}
           width={0}
           height={0}
           alt="thank-you-image-preview"

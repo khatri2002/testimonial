@@ -86,7 +86,7 @@ const extraSettingsSchema = z
         });
   });
 
-export const createSpaceSchema = z.object({
+export const spaceSchema = z.object({
   basics: basicsSchema,
   prompts: promptsSchema,
   thank_you_screen: thankYouSchema,

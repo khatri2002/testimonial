@@ -9,7 +9,7 @@ export type FieldConfig = {
 
 export type FieldValidations = {
   type: "number" | "string" | "email" | "boolean";
-  required?: boolean;
+  required: boolean;
   maxLength?: number;
   minLength?: number;
 };

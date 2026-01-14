@@ -47,23 +47,33 @@ enum Theme {
   light
 }
 
+enum ConsentDisplay {
+  required
+  optional
+  hidden
+}
+
 model Space {
-  id                String   @id @default(uuid())
-  slug              String   @unique
-  name              String
-  image             Json?
-  header_title      String
-  message           String
-  theme             Theme
-  question_label    String?
-  questions         String[]
-  thank_you_image   Json?
-  thank_you_title   String
-  thank_you_message String
-  send_btn_text     String
-  verify_email      Boolean
-  created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
+  id                    String         @id @default(uuid())
+  slug                  String         @unique
+  name                  String
+  image                 Json?
+  header_title          String
+  message               String
+  theme                 Theme
+  question_label        String?
+  questions             String[]
+  thank_you_image       Json?
+  thank_you_title       String
+  thank_you_message     String
+  send_btn_text         String
+  verify_email          Boolean
+  collect_star_rating   Boolean
+  max_testimonial_chars Int?
+  consent_display       ConsentDisplay
+  consent_statement     String?
+  created_at            DateTime       @default(now())
+  updated_at            DateTime       @updatedAt
 
   userId String
 
@@ -102,6 +112,7 @@ model Field {
   category    Category
   visibility  Visibility @default(public)
   active      Boolean    @default(true)
+  disabled    Boolean?
 
   spaceId String
 

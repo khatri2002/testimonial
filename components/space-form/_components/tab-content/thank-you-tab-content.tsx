@@ -7,21 +7,24 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CreateSpaceSchema } from "@/lib/schema.types";
+import { SpaceSchema } from "@/lib/schema.types";
 import { Trash } from "lucide-react";
 import Image from "next/image";
-import { useMemo, useRef } from "react";
-import { Controller, useFormContext, useWatch } from "react-hook-form";
+import { useRef } from "react";
+import { Controller, useFormContext } from "react-hook-form";
 
-export default function ThankYouTabContent() {
-  const { control, resetField, trigger } = useFormContext<CreateSpaceSchema>();
+interface ThankYouTabContentProps {
+  previewThankYouImage?: string;
+  handleSetPreviewThankYouImage: (image: string | undefined) => void;
+}
+
+export default function ThankYouTabContent({
+  previewThankYouImage,
+  handleSetPreviewThankYouImage,
+}: ThankYouTabContentProps) {
+  const { control, resetField, trigger } = useFormContext<SpaceSchema>();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const image = useWatch({ control, name: "thank_you_screen.thank_you_image" });
-  const previewImage = useMemo(
-    () => image && URL.createObjectURL(image),
-    [image],
-  );
 
   return (
     <div className="mt-1">
@@ -37,9 +40,9 @@ export default function ThankYouTabContent() {
               </FieldLabel>
               <div className="flex items-center gap-4">
                 <div className="bg-muted relative size-12 rounded-full">
-                  {previewImage && (
+                  {previewThankYouImage && (
                     <Image
-                      src={previewImage}
+                      src={previewThankYouImage}
                       alt=""
                       fill
                       className="rounded-full object-cover"
@@ -58,6 +61,8 @@ export default function ThankYouTabContent() {
                     field.onChange(file);
 
                     fileInput.value = ""; // reset the input value to allow re-uploading the same file
+                    if (file)
+                      handleSetPreviewThankYouImage(URL.createObjectURL(file));
                   }}
                 />
                 <Button
@@ -67,7 +72,7 @@ export default function ThankYouTabContent() {
                 >
                   Choose File
                 </Button>
-                {previewImage && (
+                {previewThankYouImage && (
                   <Button
                     type="button"
                     variant="ghost"
@@ -75,6 +80,7 @@ export default function ThankYouTabContent() {
                     onClick={() => {
                       resetField("thank_you_screen.thank_you_image");
                       trigger("thank_you_screen.thank_you_image");
+                      handleSetPreviewThankYouImage(undefined);
                     }}
                   >
                     <Trash />

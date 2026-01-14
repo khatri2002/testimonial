@@ -30,7 +30,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { CreateSpaceSchema } from "@/lib/schema.types";
+import { SpaceSchema } from "@/lib/schema.types";
 import {
   ChevronDown,
   CircleCheckBig,
@@ -39,13 +39,8 @@ import {
   Trash,
 } from "lucide-react";
 import Image from "next/image";
-import { useMemo, useRef } from "react";
-import {
-  Controller,
-  useFieldArray,
-  useFormContext,
-  useWatch,
-} from "react-hook-form";
+import { useRef } from "react";
+import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 
 interface BasicsTabContentProps {
   isCheckingSlug: boolean;
@@ -54,14 +49,18 @@ interface BasicsTabContentProps {
     available?: boolean;
   } | null;
   slugAvailability: boolean;
+  previewImage?: string;
+  handleSetPreviewImage: (image: string | undefined) => void;
 }
 
 export default function BasicsTabContent({
   isCheckingSlug,
   slugAvailableRes,
   slugAvailability,
+  previewImage,
+  handleSetPreviewImage,
 }: BasicsTabContentProps) {
-  const { control, trigger, resetField } = useFormContext<CreateSpaceSchema>();
+  const { control, trigger, resetField } = useFormContext<SpaceSchema>();
 
   const renderSlugAddOn = () => {
     if (isCheckingSlug) return <Spinner />;
@@ -121,11 +120,6 @@ export default function BasicsTabContent({
   });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const image = useWatch({ control, name: "basics.image" });
-  const previewImage = useMemo(
-    () => image && URL.createObjectURL(image),
-    [image],
-  );
 
   return (
     <div className="mt-1">
@@ -225,6 +219,7 @@ export default function BasicsTabContent({
                     field.onChange(file);
 
                     fileInput.value = ""; // reset the input value to allow re-uploading the same file
+                    if (file) handleSetPreviewImage(URL.createObjectURL(file));
                   }}
                 />
                 <Button
@@ -242,6 +237,7 @@ export default function BasicsTabContent({
                     onClick={() => {
                       resetField("basics.image");
                       trigger("basics.image");
+                      handleSetPreviewImage(undefined);
                     }}
                   >
                     <Trash />

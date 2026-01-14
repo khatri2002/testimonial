@@ -13,11 +13,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { CreateSpaceSchema } from "@/lib/schema.types";
+import { SpaceSchema } from "@/lib/schema.types";
 import { Controller, useFormContext } from "react-hook-form";
 
 export default function ExtraSettingsContent() {
-  const { control, trigger } = useFormContext<CreateSpaceSchema>();
+  const { control, trigger } = useFormContext<SpaceSchema>();
 
   return (
     <div className="mt-1">
