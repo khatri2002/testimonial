@@ -21,8 +21,8 @@ export default async function Dashboard({ children }: DashboardProps) {
       disableTransitionOnChange
     >
       <div className="flex min-h-screen flex-col">
-        <nav className="flex items-center justify-between border-b px-12 py-4">
-          <Link href="/dashboard" className="relative block h-10 w-45">
+        <nav className="flex items-center justify-between border-b px-5 py-4 sm:px-12">
+          <Link href="/dashboard" className="relative block h-10 w-38 sm:w-45">
             <ThemeImage
               darkSrc="/testimonial-dark_theme-logo.svg"
               lightSrc="/testimonial-light_theme-logo.svg"

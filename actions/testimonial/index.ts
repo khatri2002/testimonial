@@ -8,6 +8,7 @@ import { spaceSchema } from "@/lib/schema";
 import { buildTestimonialSchema } from "@/lib/utils";
 import { prisma } from "@/prisma";
 import { Prisma } from "@/prisma/src/generated/prisma/client";
+import { revalidatePath } from "next/cache";
 import { emailSchema } from "./lib/schema";
 import { OtpEmailTemplate } from "./lib/templates";
 import { generateSecureOtp, uploadFileToCloudinary } from "./lib/utils";
@@ -473,4 +474,115 @@ export const editSpace = async (id: string, fd: FormData) => {
   }
 
   return { success: true, message: "Space edited" };
+};
+
+export const duplicateSpace = async (id: string) => {
+  // authenticate user
+  const session = await auth();
+  if (!session?.user || !session.user.email)
+    return { success: false, message: "Unauthorized" };
+
+  // fetch user
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+  });
+  if (!user) return { success: false, message: "User not found" };
+
+  // fetch space
+  const space = await prisma.space.findUnique({
+    where: { id, userId: user.id },
+    include: { fields: true },
+  });
+  if (!space) return { success: false, message: "Space not found" };
+
+  const {
+    slug,
+    name,
+    image,
+    header_title,
+    message,
+    theme,
+    question_label,
+    questions,
+    thank_you_image,
+    thank_you_title,
+    thank_you_message,
+    send_btn_text,
+    verify_email,
+    collect_star_rating,
+    max_testimonial_chars,
+    consent_display,
+    consent_statement,
+    fields,
+  } = space;
+
+  // create duplicate space
+  try {
+    const newSlug = `${slug}-copy-${Date.now()}`;
+    await prisma.space.create({
+      data: {
+        slug: newSlug,
+        name: `${name} (Copy)`,
+        image: image ?? Prisma.DbNull,
+        header_title,
+        message,
+        theme,
+        question_label,
+        questions,
+        thank_you_image: thank_you_image ?? Prisma.DbNull,
+        thank_you_title,
+        thank_you_message,
+        send_btn_text,
+        verify_email,
+        collect_star_rating,
+        max_testimonial_chars,
+        consent_display,
+        consent_statement,
+        userId: user.id,
+        fields: {
+          create: fields.map((field) => ({
+            field_key: field.field_key,
+            label: field.label,
+            placeholder: field.placeholder,
+            type: field.type,
+            validations: field.validations,
+            config: field.config,
+            category: field.category,
+            visibility: field.visibility,
+            position: field.position,
+            active: field.active,
+            disabled: field.disabled,
+          })) as Prisma.FieldCreateWithoutSpaceInput[],
+        },
+      },
+    });
+  } catch (err) {
+    return { success: false, message: "Failed to duplicate space" };
+  }
+
+  revalidatePath("/dashboard");
+  return { success: true, message: "Space duplicated" };
+};
+
+export const deleteSpace = async (id: string) => {
+  // authenticate user
+  const session = await auth();
+  if (!session?.user || !session.user.email)
+    return { success: false, message: "Unauthorized" };
+
+  // fetch user
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+  });
+  if (!user) return { success: false, message: "User not found" };
+
+  // delete the space
+  try {
+    await prisma.space.delete({ where: { id, userId: user.id } });
+  } catch (err) {
+    return { success: false, message: "Failed to delete space" };
+  }
+
+  revalidatePath("/dashboard");
+  return { success: true, message: "Space deleted" };
 };

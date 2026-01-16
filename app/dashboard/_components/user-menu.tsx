@@ -34,7 +34,7 @@ export default function UserMenu({ user }: UserMenuProps) {
             alt="user"
             width={36}
             height={36}
-            className="size-9 cursor-pointer rounded-full"
+            className="size-8 cursor-pointer rounded-full sm:size-9"
           />
         ) : (
           <span className="bg-muted-foreground flex size-9 cursor-pointer items-center justify-center rounded-full">
