@@ -586,3 +586,30 @@ export const deleteSpace = async (id: string) => {
   revalidatePath("/dashboard");
   return { success: true, message: "Space deleted" };
 };
+
+export const deleteTestimonial = async (id: string) => {
+  // authenticate user
+  const session = await auth();
+  if (!session?.user || !session.user.email)
+    return { success: false, message: "Unauthorized" };
+
+  // fetch user
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+  });
+  if (!user) return { success: false, message: "User not found" };
+
+  // delete the testimonial (response)
+  try {
+    const response = await prisma.response.delete({
+      where: { id, space: { userId: user.id } },
+      include: { space: true },
+    });
+
+    revalidatePath(`/dashboard/${response.space.slug}/inbox`);
+  } catch (err) {
+    return { success: false, message: "Failed to delete testimonial" };
+  }
+
+  return { success: true, message: "Testimonial deleted" };
+};

@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/input-group";
 import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
-import { useSearchStore } from "../lib/useSearchStore";
+import { useSearchStore } from "../_lib/useSearchStore";
 
 interface SearchInputProps {
   className?: string;
@@ -18,9 +18,9 @@ export default function SearchInput({ className }: SearchInputProps) {
   const setQuery = useSearchStore((state) => state.setQuery);
 
   return (
-    <InputGroup className={cn("bg-card!", className)}>
+    <InputGroup className={cn("w-full", className)}>
       <InputGroupInput
-        placeholder="Search space by name or keyword..."
+        placeholder="Search by name or keyword..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />

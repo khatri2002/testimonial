@@ -29,7 +29,7 @@ export default function SpaceCard({ space }: SpaceCardProps) {
 
   return (
     <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-      <Link href={`/dashboard/${slug}`}>
+      <Link href={`/dashboard/${slug}/inbox`}>
         <div className="bg-card hover:bg-card/80 space-y-2 rounded-lg border p-3 sm:p-4">
           <div className="flex items-center justify-between">
             <span>{name}</span>
