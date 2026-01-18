@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client"
+  output   = "./src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts Account[]
+  spaces   Space[]
+}
+
+model Account {
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+enum Theme {
+  dark
+  light
+}
+
+enum ConsentDisplay {
+  required
+  optional
+  hidden
+}
+
+model Space {
+  id                    String         @id @default(uuid())
+  slug                  String         @unique
+  name                  String
+  image                 Json?
+  header_title          String
+  message               String
+  theme                 Theme
+  question_label        String?
+  questions             String[]
+  thank_you_image       Json?
+  thank_you_title       String
+  thank_you_message     String
+  send_btn_text         String
+  verify_email          Boolean
+  collect_star_rating   Boolean
+  max_testimonial_chars Int?
+  consent_display       ConsentDisplay
+  consent_statement     String?
+  created_at            DateTime       @default(now())
+  updated_at            DateTime       @updatedAt
+
+  userId String
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fields    Field[]
+  responses Response[]
+}
+
+enum Type {
+  textbox
+  textarea
+  checkbox
+  rating
+}
+
+enum Category {
+  core
+  suggested
+  custom
+}
+
+enum Visibility {
+  public
+  private
+}
+
+model Field {
+  id          String     @id @default(uuid())
+  field_key   String
+  label       String
+  placeholder String?
+  type        Type
+  position    Int
+  validations Json
+  config      Json?
+  category    Category
+  visibility  Visibility @default(public)
+  active      Boolean    @default(true)
+  disabled    Boolean?
+
+  spaceId String
+
+  space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+}
+
+model Response {
+  id           String   @id @default(uuid())
+  answers      Json
+  submitted_at DateTime @default(now())
+
+  spaceId String
+
+  space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+}
