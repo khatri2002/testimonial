@@ -1,9 +1,19 @@
-import { prisma } from "@/prisma";
+"use client";
 
-export default async function Home() {
-  const spaces = await prisma.space.findMany();
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { addTest } from "./queries";
 
-  return spaces.length === 0
-    ? "no space found"
-    : `${spaces.length} space found`;
+export default function Home() {
+  const handleAddTest = async () => {
+    try {
+      await addTest();
+      toast.success("Added");
+    } catch (err) {
+      console.log(`ERROR - ${err}`);
+      toast.error("Failed to add");
+    }
+  };
+
+  return <Button onClick={handleAddTest}>add test</Button>;
 }
