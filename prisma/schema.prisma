@@ -78,9 +78,10 @@ model Space {
 
   userId String
 
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  fields    Field[]
-  responses Response[]
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fields     Field[]
+  responses  Response[]
+  embedWalls EmbedWall[]
 }
 
 enum Type {
@@ -127,11 +128,40 @@ model Response {
 
   spaceId String
 
-  space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  space     Space       @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  embedWall EmbedWall[]
 }
 
-model Test {
-  id         String   @id @default(uuid())
-  test_name  String
-  created_at DateTime @default(now())
+enum BorderRadius {
+  none
+  sm
+  md
+  lg
+  xl
+}
+
+model EmbedWall {
+  id   String @id @default(uuid())
+  name String
+
+  hide_date        Boolean @default(true)
+  hide_title       Boolean
+  hide_company     Boolean
+  hide_star_rating Boolean
+
+  theme                Theme        @default(dark)
+  page_bg_color        String       @default("#0a0a0a")
+  card_gap             Int          @default(16) // in px
+  card_bg_color        String       @default("#171717")
+  text_primary_color   String       @default("#fafafa")
+  text_secondary_color String       @default("#a1a1a1")
+  hide_border          Boolean      @default(false)
+  border_radius        BorderRadius @default(lg)
+  border_thickness     Int          @default(1) // in px
+  border_color         String       @default("#ffffff1a")
+
+  spaceId String
+
+  space     Space      @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  responses Response[]
 }
