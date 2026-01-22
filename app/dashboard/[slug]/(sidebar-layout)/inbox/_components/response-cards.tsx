@@ -26,7 +26,7 @@ export default function ResponseCards({ responses }: ResponseCardsProps) {
 
   return filteredResponses.length > 0 ? (
     <div className="grid grid-cols-2 gap-3">
-      {responses.map((response) => (
+      {filteredResponses.map((response) => (
         <ResponseCard key={response.id} response={response} />
       ))}
     </div>
