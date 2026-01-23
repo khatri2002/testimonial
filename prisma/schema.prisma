@@ -156,7 +156,6 @@ model EmbedWall {
   card_bg_color        String       @default("#171717")
   text_primary_color   String       @default("#fafafa")
   text_secondary_color String       @default("#a1a1a1")
-  hide_border          Boolean      @default(false)
   border_radius        BorderRadius @default(lg)
   border_thickness     Int          @default(1) // in px
   border_color         String       @default("#ffffff1a")
