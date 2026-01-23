@@ -9,7 +9,7 @@ interface EmbedWallProps {
 export default async function EmbedWall({ params }: EmbedWallProps) {
   const { id } = await params;
   const embedWall = await prisma.embedWall.findUnique({
-    where: { id },
+    where: { id, published: true },
     include: { responses: true },
   });
   if (!embedWall) notFound();

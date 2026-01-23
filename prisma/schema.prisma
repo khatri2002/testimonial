@@ -141,8 +141,9 @@ enum BorderRadius {
 }
 
 model EmbedWall {
-  id   String @id @default(uuid())
-  name String
+  id        String  @id @default(uuid())
+  name      String
+  published Boolean @default(false)
 
   hide_date        Boolean @default(true)
   hide_title       Boolean
