@@ -128,8 +128,8 @@ model Response {
 
   spaceId String
 
-  space     Space       @relation(fields: [spaceId], references: [id], onDelete: Cascade)
-  embedWall EmbedWall[]
+  space              Space               @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  embedWallResponses EmbedWallResponse[]
 }
 
 enum BorderRadius {
@@ -162,6 +162,16 @@ model EmbedWall {
 
   spaceId String
 
-  space     Space      @relation(fields: [spaceId], references: [id], onDelete: Cascade)
-  responses Response[]
+  space              Space               @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  embedWallResponses EmbedWallResponse[]
+}
+
+model EmbedWallResponse {
+  id          String @id @default(uuid())
+  embedWallId String
+  responseId  String
+  order       Int
+
+  embedWall EmbedWall @relation(fields: [embedWallId], references: [id])
+  response  Response  @relation(fields: [responseId], references: [id])
 }

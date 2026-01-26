@@ -5,20 +5,25 @@ import Masonry from "react-responsive-masonry";
 import TestimonialCard from "./testimonial-card";
 
 interface TestimonialCardsProps {
-  embedWall: Prisma.EmbedWallGetPayload<{ include: { responses: true } }>;
+  embedWall: Prisma.EmbedWallGetPayload<{
+    include: { embedWallResponses: { include: { response: true } } };
+  }>;
 }
 
 export default function TestimonialCards({ embedWall }: TestimonialCardsProps) {
-  const { card_gap, page_bg_color, responses } = embedWall;
+  const { card_gap, page_bg_color, embedWallResponses } = embedWall;
 
-  const hasFewCards = responses.length <= 3;
+  const hasFewCards = embedWallResponses.length <= 3;
   const gap = `${card_gap}px`;
 
-  const cards = responses.map((response) => (
+  // sort by 'order' in ascending order
+  embedWallResponses.sort((a, b) => a.order - b.order);
+
+  const cards = embedWallResponses.map((embedWallResponse) => (
     <TestimonialCard
-      key={response.id}
+      key={embedWallResponse.id}
       className={hasFewCards ? "w-1/3" : undefined}
-      response={response}
+      response={embedWallResponse.response}
       embedWall={embedWall}
     />
   ));
