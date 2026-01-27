@@ -5,6 +5,8 @@ import {
   closestCenter,
   DndContext,
   DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -17,39 +19,47 @@ import {
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
 import { useState } from "react";
+import { useEmbedWallStore } from "../_lib/useEmbedWallStore";
 import SelectTestimonialDialog from "./select-testimonial-dialog";
-import TestimonialCardDraggable from "./testimonial-layout-draggable";
+import TestimonialCardSortable from "./testimonial-layout-sortable";
 
 export default function TestimonialsContent() {
+  const includedIds = useEmbedWallStore((state) => state.includedIds);
+  const setIncludedIds = useEmbedWallStore((state) => state.setIncludedIds);
+
   const [openSelectTestimonialdialog, setOpenSelectTestimonialdialog] =
     useState(false);
 
-  const [items, setItems] = useState(
-    Array.from({ length: 10 }).map((_, index) => index + 1),
-  );
+  const [activeId, setActiveId] = useState<string | null>(null);
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    setActiveId(String(active.id));
+  };
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!active || !over) return;
 
-    if (active.id !== over.id)
-      setItems((items) => {
-        const oldIndex = items.indexOf(Number(active.id));
-        const newIndex = items.indexOf(Number(over.id));
+    if (active.id !== over.id) {
+      const oldIndex = includedIds.indexOf(String(active.id));
+      const newIndex = includedIds.indexOf(String(over.id));
+      const updatedIncludedIds = arrayMove(includedIds, oldIndex, newIndex);
 
-        return arrayMove(items, oldIndex, newIndex);
-      });
+      setIncludedIds(updatedIncludedIds);
+    }
+
+    setActiveId(null);
   };
 
   return (
     <>
       <div className="text-muted-foreground space-y-2 text-center text-sm">
-        <p>Showing 6 testimonials on this wall</p>
+        <p>Showing {includedIds.length} testimonials on this wall</p>
         <p>
           <Button
             variant="outline"
@@ -69,13 +79,22 @@ export default function TestimonialsContent() {
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
+            onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
           >
-            <SortableContext items={items} strategy={rectSortingStrategy}>
-              {items.map((id) => (
-                <TestimonialCardDraggable key={id} id={id} />
+            <SortableContext items={includedIds} strategy={rectSortingStrategy}>
+              {includedIds.map((id) => (
+                <TestimonialCardSortable key={id} id={id} />
               ))}
             </SortableContext>
+            <DragOverlay>
+              {activeId && (
+                <TestimonialCardSortable
+                  id={activeId}
+                  className="cursor-grabbing"
+                />
+              )}
+            </DragOverlay>
           </DndContext>
         </div>
       </div>

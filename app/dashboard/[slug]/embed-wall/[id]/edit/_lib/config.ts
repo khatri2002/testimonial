@@ -5,12 +5,12 @@ export const tabs = [
   {
     value: "testimonials",
     label: "Testimonials",
-    content: <TestimonialsContent />,
+    content: TestimonialsContent,
   },
   {
     value: "appearance",
     label: "Appearance",
-    content: <AppearanceContent />,
+    content: AppearanceContent,
   },
 ];
 
