@@ -22,7 +22,7 @@ export default function EmbedWallCard({ embedWall }: EmbedWallCardProps) {
 
   return (
     <DropdownMenu>
-      <Link href="/" className="block">
+      <Link href={`/dashboard/`} className="block">
         <div className="bg-card hover:bg-card/80 space-y-3 rounded-lg border p-3 transition-colors">
           <div className="flex items-center justify-between">
             <span>{name}</span>
