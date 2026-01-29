@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { borderRadiusOptions, themeOptions } from "./config";
 
 const fieldValidationsSchema = z.object({
   type: z.enum(["number", "string", "email", "boolean"]),
@@ -91,4 +92,27 @@ export const spaceSchema = z.object({
   prompts: promptsSchema,
   thank_you_screen: thankYouSchema,
   extra_settings: extraSettingsSchema,
+});
+
+export const embedWallSchema = z.object({
+  name: z.string(),
+  components_visibility: z.object({
+    show_date: z.boolean(),
+    show_title: z.boolean(),
+    show_company: z.boolean(),
+    show_star_rating: z.boolean(),
+  }),
+  themes_colors: z.object({
+    theme: z.enum(themeOptions.map((option) => option.value)),
+    page_bg_color: z.string(),
+    card_bg_color: z.string(),
+    text_primary_color: z.string(),
+    text_secondary_color: z.string(),
+    border_color: z.string(),
+  }),
+  layout_borders: z.object({
+    card_gap: z.number(),
+    border_thickness: z.number(),
+    border_radius: z.enum(borderRadiusOptions),
+  }),
 });

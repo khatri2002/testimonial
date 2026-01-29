@@ -17,10 +17,10 @@ export default function TestimonialCard({
   embedWall,
 }: TestimonialCardProps) {
   const {
-    hide_date,
-    hide_title,
-    hide_company,
-    hide_star_rating,
+    show_date,
+    show_title,
+    show_company,
+    show_star_rating,
 
     card_bg_color,
     text_primary_color,
@@ -34,8 +34,8 @@ export default function TestimonialCard({
   const answers = rawAnswers as Record<string, string>;
 
   const formatTitleAndCompany = [
-    !hide_title && answers.title,
-    !hide_company && answers.company,
+    show_title && answers.title,
+    show_company && answers.company,
   ]
     .filter(Boolean)
     .join(", ");
@@ -74,7 +74,7 @@ export default function TestimonialCard({
         )}
       </div>
 
-      {!hide_star_rating && answers.rating && (
+      {show_star_rating && answers.rating && (
         <Rating value={Number(answers.rating)} readOnly className="mt-3">
           {Array.from({ length: 5 }).map((_, index) => (
             <RatingButton className="text-yellow-500" key={index} />
@@ -96,7 +96,7 @@ export default function TestimonialCard({
         </button>
       )}
 
-      {!hide_date && (
+      {show_date && (
         <span
           className="mt-3 block text-xs"
           style={{ color: text_secondary_color }}

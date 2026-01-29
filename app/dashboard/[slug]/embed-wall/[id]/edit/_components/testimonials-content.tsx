@@ -1,5 +1,6 @@
 "use client";
 
+import { updateEmbedWallResponses } from "@/actions/embed-wall";
 import { Button } from "@/components/ui/button";
 import {
   closestCenter,
@@ -19,16 +20,25 @@ import {
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
 import { useState } from "react";
+import { toast } from "sonner";
 import { useEmbedWallStore } from "../_lib/useEmbedWallStore";
 import SelectTestimonialDialog from "./select-testimonial-dialog";
 import TestimonialCardSortable from "./testimonial-layout-sortable";
 
 export default function TestimonialsContent() {
+  const id = useEmbedWallStore((state) => state.id);
   const includedIds = useEmbedWallStore((state) => state.includedIds);
   const setIncludedIds = useEmbedWallStore((state) => state.setIncludedIds);
 
   const [openSelectTestimonialdialog, setOpenSelectTestimonialdialog] =
     useState(false);
+
+  const handleUpdateEmbedWallResponses = async () => {
+    if (!id) return;
+
+    const { success } = await updateEmbedWallResponses(id, includedIds);
+    if (!success) toast.error("Couldn't save");
+  };
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const sensors = useSensors(
@@ -41,7 +51,7 @@ export default function TestimonialsContent() {
     const { active } = event;
     setActiveId(String(active.id));
   };
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     if (!active || !over) return;
 
@@ -51,6 +61,7 @@ export default function TestimonialsContent() {
       const updatedIncludedIds = arrayMove(includedIds, oldIndex, newIndex);
 
       setIncludedIds(updatedIncludedIds);
+      handleUpdateEmbedWallResponses();
     }
 
     setActiveId(null);
@@ -100,7 +111,10 @@ export default function TestimonialsContent() {
       </div>
       <SelectTestimonialDialog
         open={openSelectTestimonialdialog}
-        handleOpenChange={(open) => setOpenSelectTestimonialdialog(open)}
+        handleOpenChange={(open) => {
+          setOpenSelectTestimonialdialog(open);
+          handleUpdateEmbedWallResponses();
+        }}
       />
     </>
   );

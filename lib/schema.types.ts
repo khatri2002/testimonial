@@ -1,4 +1,5 @@
 import * as z from "zod";
-import { spaceSchema } from "./schema";
+import { embedWallSchema, spaceSchema } from "./schema";
 
 export type SpaceSchema = z.infer<typeof spaceSchema>;
+export type EmbedWallSchema = z.infer<typeof embedWallSchema>;

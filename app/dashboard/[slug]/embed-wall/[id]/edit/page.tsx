@@ -34,7 +34,36 @@ export default async function EmbedWallEdit({ params }: EmbedWallEditProps) {
     (ewr) => ewr.response.id,
   );
 
+  const defaultValues = {
+    name: embedWall.name,
+    components_visibility: {
+      show_date: embedWall.show_date,
+      show_title: embedWall.show_title,
+      show_company: embedWall.show_company,
+      show_star_rating: embedWall.show_star_rating,
+    },
+    themes_colors: {
+      theme: embedWall.theme,
+      page_bg_color: embedWall.page_bg_color,
+      card_bg_color: embedWall.card_bg_color,
+      text_primary_color: embedWall.text_primary_color,
+      text_secondary_color: embedWall.text_secondary_color,
+      border_color: embedWall.border_color,
+    },
+    layout_borders: {
+      card_gap: embedWall.card_gap,
+      border_thickness: embedWall.border_thickness,
+      border_radius: embedWall.border_radius,
+    },
+  };
+
   return (
-    <ClientBoundary responsesById={responsesById} includedIds={includedIds} />
+    <ClientBoundary
+      id={id}
+      responsesById={responsesById}
+      includedIds={includedIds}
+      published={embedWall.published}
+      defaultValues={defaultValues}
+    />
   );
 }

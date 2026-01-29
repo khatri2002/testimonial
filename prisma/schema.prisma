@@ -145,10 +145,10 @@ model EmbedWall {
   name      String
   published Boolean @default(false)
 
-  hide_date        Boolean @default(true)
-  hide_title       Boolean
-  hide_company     Boolean
-  hide_star_rating Boolean
+  show_date        Boolean @default(false)
+  show_title       Boolean
+  show_company     Boolean
+  show_star_rating Boolean
 
   theme                Theme        @default(dark)
   page_bg_color        String       @default("#0a0a0a")
@@ -174,4 +174,6 @@ model EmbedWallResponse {
 
   embedWall EmbedWall @relation(fields: [embedWallId], references: [id])
   response  Response  @relation(fields: [responseId], references: [id])
+
+  @@unique([embedWallId, responseId])
 }

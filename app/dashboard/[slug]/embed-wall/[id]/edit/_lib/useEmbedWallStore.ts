@@ -2,8 +2,10 @@ import { create } from "zustand";
 import { EmbedWallContextData, IncludedIds, ResponsesById } from "./types";
 
 interface EmbedWallState {
+  id: string | null;
   responsesById: ResponsesById;
   includedIds: IncludedIds;
+  published: boolean | null;
   hydrate: (data: EmbedWallContextData) => void;
   toggleResponseInclusion: (id: string) => void;
   bulkSetResponseInclusion: (ids: string[], include: boolean) => void;
@@ -11,12 +13,18 @@ interface EmbedWallState {
 }
 
 export const useEmbedWallStore = create<EmbedWallState>((set) => ({
+  id: null,
   responsesById: {},
   includedIds: [],
+  published: null,
 
-  hydrate: (data) => {
-    set({ responsesById: data.responsesById, includedIds: data.includedIds });
-  },
+  hydrate: (data) =>
+    set({
+      id: data.id,
+      responsesById: data.responsesById,
+      includedIds: data.includedIds,
+      published: data.published,
+    }),
 
   toggleResponseInclusion: (id) =>
     set((state) => {
