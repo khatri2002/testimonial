@@ -4,6 +4,8 @@ import { auth } from "@/auth";
 import { embedWallSchema } from "@/lib/schema";
 import { EmbedWallSchema } from "@/lib/schema.types";
 import { prisma } from "@/prisma";
+import { revalidatePath } from "next/cache";
+import { generateEmbedWallName, withSuffix } from "./lib/utils";
 
 export const publishEmbedWall = async (id: string) => {
   // authenticate user
@@ -128,4 +130,93 @@ export const updateEmbedWall = async (
   }
 
   return { success: true, message: "Embed-wall updated" };
+};
+
+export const createEmbedWall = async (slug: string) => {
+  // authenticate user
+  const session = await auth();
+  if (!session?.user || !session.user.email)
+    return { success: false, message: "Unauthorized" };
+
+  // fetch user
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+  });
+  if (!user) return { success: false, message: "User not found" };
+
+  // fetch space
+  const space = await prisma.space.findUnique({
+    where: { slug, userId: user.id },
+    include: {
+      fields: { where: { active: true } },
+      responses: { orderBy: { submitted_at: "desc" } },
+    },
+  });
+  if (!space) return { success: false, message: "Space not found" };
+
+  try {
+    // generate unique name
+    const uuid = crypto.randomUUID();
+    const baseName = generateEmbedWallName(uuid);
+    const existingCount = await prisma.embedWall.count({
+      where: { name: baseName, space: { userId: user.id } },
+    });
+    const finalName = withSuffix(baseName, existingCount);
+
+    // create embed-wall
+    const isCollectingTitle = space.fields.some(
+      (field) => field.field_key === "title",
+    );
+    const isCollectingCompany = space.fields.some(
+      (field) => field.field_key === "company",
+    );
+    const isCollectingRating = space.collect_star_rating;
+
+    const embedWall = await prisma.embedWall.create({
+      data: {
+        name: finalName,
+        show_title: isCollectingTitle,
+        show_company: isCollectingCompany,
+        show_star_rating: isCollectingRating,
+        spaceId: space.id,
+        embedWallResponses: {
+          createMany: {
+            data: space.responses.map((response, index) => ({
+              responseId: response.id,
+              order: index,
+            })),
+          },
+        },
+      },
+    });
+
+    return {
+      success: true,
+      message: "Wall created",
+      data: { id: embedWall.id },
+    };
+  } catch (err) {
+    return { success: false, message: "Failed to create" };
+  }
+};
+
+export const deleteEmbedWall = async (id: string) => {
+  // authenticate user
+  const session = await auth();
+  if (!session?.user || !session.user.email)
+    return { success: false, message: "Unauthorized" };
+
+  // delete embed-wall
+  try {
+    const embedWall = await prisma.embedWall.delete({
+      where: { id, space: { user: { email: session.user.email } } },
+      include: { space: true },
+    });
+
+    revalidatePath(`/dashboard/${embedWall.space.slug}/embed-wall`);
+  } catch (err) {
+    return { success: false, message: "Failed to delete" };
+  }
+
+  return { success: true, message: "Wall deleted" };
 };

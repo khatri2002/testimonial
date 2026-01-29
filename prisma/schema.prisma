@@ -160,6 +160,9 @@ model EmbedWall {
   border_thickness     Int          @default(1) // in px
   border_color         String       @default("#ffffff1a")
 
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
   spaceId String
 
   space              Space               @relation(fields: [spaceId], references: [id], onDelete: Cascade)
@@ -172,8 +175,8 @@ model EmbedWallResponse {
   responseId  String
   order       Int
 
-  embedWall EmbedWall @relation(fields: [embedWallId], references: [id])
-  response  Response  @relation(fields: [responseId], references: [id])
+  embedWall EmbedWall @relation(fields: [embedWallId], references: [id], onDelete: Cascade)
+  response  Response  @relation(fields: [responseId], references: [id], onDelete: Cascade)
 
   @@unique([embedWallId, responseId])
 }
