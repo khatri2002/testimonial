@@ -11,9 +11,10 @@ import EmbedWallCardActions from "./embed-wall-card-actions";
 
 interface EmbedWallCardProps {
   embedWall: EmbedWall;
+  slug: string;
 }
 
-export default function EmbedWallCard({ embedWall }: EmbedWallCardProps) {
+export default function EmbedWallCard({ embedWall, slug }: EmbedWallCardProps) {
   const { id, name, published, created_at } = embedWall;
 
   const publishState = published
@@ -22,7 +23,7 @@ export default function EmbedWallCard({ embedWall }: EmbedWallCardProps) {
 
   return (
     <DropdownMenu>
-      <Link href={`/dashboard/`} className="block">
+      <Link href={`/dashboard/${slug}/embed-wall/${id}/edit`} className="block">
         <div className="bg-card hover:bg-card/80 space-y-3 rounded-lg border p-3 transition-colors">
           <div className="flex items-center justify-between">
             <span>{name}</span>

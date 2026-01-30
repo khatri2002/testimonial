@@ -27,7 +27,7 @@ export default async function SpaceEmbededWall({
   ) : (
     <>
       <EmbedWallHeader slug={slug} />
-      <EmbedWallCards embedWalls={embedWalls} />
+      <EmbedWallCards embedWalls={embedWalls} slug={slug} />
     </>
   );
 }

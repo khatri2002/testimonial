@@ -9,9 +9,13 @@ import EmbedWallCard from "./embed-wall-card";
 
 interface EmbedWallCardsProps {
   embedWalls: EmbedWall[];
+  slug: string;
 }
 
-export default function EmbedWallCards({ embedWalls }: EmbedWallCardsProps) {
+export default function EmbedWallCards({
+  embedWalls,
+  slug,
+}: EmbedWallCardsProps) {
   const query = useSearchStore((state) => state.query);
   const [debouncedQuery] = useDebounce(query, 700);
 
@@ -32,7 +36,7 @@ export default function EmbedWallCards({ embedWalls }: EmbedWallCardsProps) {
   ) : (
     <div className="mt-4 space-y-3">
       {filteredEmbedWalls.map((embedWall) => (
-        <EmbedWallCard key={embedWall.id} embedWall={embedWall} />
+        <EmbedWallCard key={embedWall.id} embedWall={embedWall} slug={slug} />
       ))}
     </div>
   );

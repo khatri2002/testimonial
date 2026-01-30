@@ -20,6 +20,7 @@ import { useEmbedWallStore } from "./_lib/useEmbedWallStore";
 export default function LayoutClient() {
   const { register, getValues } = useFormContext<EmbedWallSchema>();
   const published = useEmbedWallStore((state) => state.published);
+  const setPublished = useEmbedWallStore((state) => state.setPublished);
   const id = useEmbedWallStore((state) => state.id);
 
   const [openPublishedDialog, setOpenPublishedDialog] = useState(false);
@@ -35,7 +36,8 @@ export default function LayoutClient() {
           toast.error(message);
           return;
         }
-        toast.success("Wall published");
+        setPublished();
+        setOpenPublishedDialog(true);
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {

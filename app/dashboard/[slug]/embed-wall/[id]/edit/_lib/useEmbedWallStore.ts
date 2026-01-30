@@ -10,6 +10,7 @@ interface EmbedWallState {
   toggleResponseInclusion: (id: string) => void;
   bulkSetResponseInclusion: (ids: string[], include: boolean) => void;
   setIncludedIds: (ids: string[]) => void;
+  setPublished: () => void;
 }
 
 export const useEmbedWallStore = create<EmbedWallState>((set) => ({
@@ -48,4 +49,5 @@ export const useEmbedWallStore = create<EmbedWallState>((set) => ({
       };
     }),
   setIncludedIds: (ids) => set(() => ({ includedIds: ids })),
+  setPublished: () => set(() => ({ published: true })),
 }));
