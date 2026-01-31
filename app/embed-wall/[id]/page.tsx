@@ -1,6 +1,6 @@
+import TestimonialCards from "@/components/testimonial-cards";
 import { prisma } from "@/prisma";
 import { notFound } from "next/navigation";
-import TestimonialCards from "./_components/testimonial-cards";
 
 interface EmbedWallProps {
   params: Promise<{ id: string }>;
@@ -16,10 +16,11 @@ export default async function EmbedWall({ params }: EmbedWallProps) {
         include: {
           response: true,
         },
+        orderBy: { order: "asc" },
       },
     },
   });
   if (!embedWall) notFound();
 
-  return <TestimonialCards embedWall={embedWall} />;
+  return <TestimonialCards embedWall={embedWall} className="min-h-screen" />;
 }
