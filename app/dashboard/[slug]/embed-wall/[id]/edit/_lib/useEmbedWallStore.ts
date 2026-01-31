@@ -3,6 +3,7 @@ import { EmbedWallContextData, IncludedIds, ResponsesById } from "./types";
 
 interface EmbedWallState {
   id: string | null;
+  slug: string | null;
   responsesById: ResponsesById;
   includedIds: IncludedIds;
   published: boolean | null;
@@ -15,6 +16,7 @@ interface EmbedWallState {
 
 export const useEmbedWallStore = create<EmbedWallState>((set) => ({
   id: null,
+  slug: null,
   responsesById: {},
   includedIds: [],
   published: null,
@@ -22,6 +24,7 @@ export const useEmbedWallStore = create<EmbedWallState>((set) => ({
   hydrate: (data) =>
     set({
       id: data.id,
+      slug: data.slug,
       responsesById: data.responsesById,
       includedIds: data.includedIds,
       published: data.published,

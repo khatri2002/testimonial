@@ -4,6 +4,7 @@ export type ResponsesById = Record<string, Response>;
 export type IncludedIds = string[];
 export type EmbedWallContextData = {
   id: string;
+  slug: string;
   responsesById: ResponsesById;
   includedIds: IncludedIds;
   published: boolean;

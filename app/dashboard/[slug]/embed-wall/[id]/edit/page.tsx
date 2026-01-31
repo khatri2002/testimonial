@@ -60,6 +60,7 @@ export default async function EmbedWallEdit({ params }: EmbedWallEditProps) {
   return (
     <ClientBoundary
       id={id}
+      slug={slug}
       responsesById={responsesById}
       includedIds={includedIds}
       published={embedWall.published}

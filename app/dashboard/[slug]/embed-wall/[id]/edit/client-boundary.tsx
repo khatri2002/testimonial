@@ -15,6 +15,7 @@ type ClientBoundaryProps = EmbedWallContextData & {
 
 export default function ClientBoundary({
   id,
+  slug,
   responsesById,
   includedIds,
   published,
@@ -22,8 +23,8 @@ export default function ClientBoundary({
 }: ClientBoundaryProps) {
   const hydrate = useEmbedWallStore((state) => state.hydrate);
   useEffect(() => {
-    hydrate({ id, responsesById, includedIds, published });
-  }, [hydrate, id, includedIds, published, responsesById]);
+    hydrate({ id, slug, responsesById, includedIds, published });
+  }, [hydrate, id, includedIds, published, responsesById, slug]);
 
   const methods = useForm<EmbedWallSchema>({
     resolver: zodResolver(embedWallSchema),

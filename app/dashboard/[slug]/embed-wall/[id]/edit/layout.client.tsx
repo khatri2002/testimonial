@@ -22,6 +22,7 @@ export default function LayoutClient() {
   const published = useEmbedWallStore((state) => state.published);
   const setPublished = useEmbedWallStore((state) => state.setPublished);
   const id = useEmbedWallStore((state) => state.id);
+  const slug = useEmbedWallStore((state) => state.slug);
 
   const [openPublishedDialog, setOpenPublishedDialog] = useState(false);
 
@@ -54,6 +55,11 @@ export default function LayoutClient() {
     if (!success) toast.error("Couldn't save");
   };
 
+  const handlePreview = () => {
+    const previewUrl = `/dashboard/${slug}/embed-wall/${id}/preview`;
+    window.open(previewUrl);
+  };
+
   return (
     <>
       <LoadingOverlay isLoading={isPublishing} />
@@ -73,7 +79,12 @@ export default function LayoutClient() {
         <div className="flex items-center gap-3">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon-lg" aria-label="preview">
+              <Button
+                variant="ghost"
+                size="icon-lg"
+                aria-label="preview"
+                onClick={handlePreview}
+              >
                 <Eye className="size-6" />
               </Button>
             </TooltipTrigger>
