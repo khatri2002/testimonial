@@ -37,7 +37,7 @@ export default function ViewResponseDialog({
 
     switch (type) {
       case "textarea":
-        return <span>{value}</span>;
+        return <span className="whitespace-pre-line">{value}</span>;
 
       case "textbox":
         return <span>{value}</span>;

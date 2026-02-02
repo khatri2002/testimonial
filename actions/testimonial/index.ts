@@ -473,7 +473,7 @@ export const editSpace = async (id: string, fd: FormData) => {
     return { success: false, message: "Failed to update space" };
   }
 
-  return { success: true, message: "Space edited" };
+  return { success: true, message: "Space edited", data: { slug } };
 };
 
 export const duplicateSpace = async (id: string) => {

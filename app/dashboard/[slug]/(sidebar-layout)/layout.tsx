@@ -1,9 +1,8 @@
 import { auth } from "@/auth";
-import { Button } from "@/components/ui/button";
-import { MessagesSquare, Pencil } from "lucide-react";
-import Link from "next/link";
+import { MessagesSquare } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
 import { getSpace } from "./_lib/queries";
+import EditSpaceBtn from "./components/edit-space-btn";
 import Sidebar from "./components/sidebar";
 
 interface SpaceLayoutProps {
@@ -41,12 +40,7 @@ export default async function SpaceLayout({
               <span className="text-muted-foreground">{responses}</span>
             </div>
           </div>
-          <Link href={`/dashboard/edit-space/${slug}`}>
-            <Button className="bg-theme-primary hover:bg-theme-primary/85">
-              <Pencil />
-              Edit space
-            </Button>
-          </Link>
+          <EditSpaceBtn slug={slug} />
         </div>
       </div>
       <div className="flex flex-[1_1_0] overflow-hidden">
