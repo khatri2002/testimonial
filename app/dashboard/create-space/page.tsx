@@ -106,7 +106,7 @@ export default function CreateSpace() {
           return;
         }
         toast.success("Space created");
-        router.push("/dashboard");
+        router.push(`/dashboard/${data.basics.slug}/inbox`);
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {

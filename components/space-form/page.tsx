@@ -163,7 +163,7 @@ export default function SpaceForm(props: SpaceFormProps) {
                 <TabsContent value="basics">
                   <BasicsTabContent
                     previewImage={previewImage}
-                    handleSetPreviewImage={(image) => setPreviewImage(image)}
+                    handleSetPreviewImage={setPreviewImage}
                     isCheckingSlug={isCheckingSlug}
                     slugAvailableRes={slugAvailableRes}
                     slugAvailability={slugAvailability}
@@ -175,9 +175,7 @@ export default function SpaceForm(props: SpaceFormProps) {
                 <TabsContent value="thank_you_screen">
                   <ThankYouTabContent
                     previewThankYouImage={previewThankYouImage}
-                    handleSetPreviewThankYouImage={(image) =>
-                      setPreviewThankYouImage(image)
-                    }
+                    handleSetPreviewThankYouImage={setPreviewThankYouImage}
                   />
                 </TabsContent>
                 <TabsContent value="extra_settings">

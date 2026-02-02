@@ -43,7 +43,7 @@ export default function SpaceFormClient({
       fd.append("thank_you_screen", JSON.stringify(restThankYouScreen));
       fd.append("extra_settings", JSON.stringify(extra_settings));
       if (image) fd.append("image", image);
-      if (thank_you_image) fd.append("image", thank_you_image);
+      if (thank_you_image) fd.append("thank_you_image", thank_you_image);
 
       try {
         const { success, message, data } = await editSpace(id, fd);

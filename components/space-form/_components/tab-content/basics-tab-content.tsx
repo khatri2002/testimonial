@@ -60,7 +60,8 @@ export default function BasicsTabContent({
   previewImage,
   handleSetPreviewImage,
 }: BasicsTabContentProps) {
-  const { control, trigger, resetField } = useFormContext<SpaceSchema>();
+  const { control, trigger, resetField, setValue } =
+    useFormContext<SpaceSchema>();
 
   const renderSlugAddOn = () => {
     if (isCheckingSlug) return <Spinner />;
@@ -312,7 +313,16 @@ export default function BasicsTabContent({
                             id={`basics.extra_information.${index}.active`}
                             className="data-[state=checked]:bg-theme-primary"
                             checked={field.value}
-                            onCheckedChange={field.onChange}
+                            onCheckedChange={(checked) => {
+                              field.onChange(checked);
+
+                              // uncheck "required" if deactivating the field
+                              if (!checked)
+                                setValue(
+                                  `basics.extra_information.${index}.validations.required`,
+                                  false,
+                                );
+                            }}
                             disabled={disabled}
                           />
                         )}
@@ -332,7 +342,16 @@ export default function BasicsTabContent({
                             id={`basics.extra_information.${index}.validations.required`}
                             className="data-[state=checked]:bg-theme-primary!"
                             checked={field.value}
-                            onCheckedChange={field.onChange}
+                            onCheckedChange={(checked) => {
+                              field.onChange(checked);
+
+                              // activate the field if marking as required
+                              if (checked)
+                                setValue(
+                                  `basics.extra_information.${index}.active`,
+                                  true,
+                                );
+                            }}
                             disabled={disabled}
                           />
                         )}
