@@ -6,48 +6,52 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogMedia,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Spinner } from "@/components/ui/spinner";
+import { Trash2Icon } from "lucide-react";
 
 interface ConfirmDeleteDialogProps {
   open: boolean;
   handleOpenChange: (open: boolean) => void;
   handleConfirm: () => void;
-  loading?: boolean;
+  isLoading?: boolean;
 }
 
 export default function ConfirmDeleteDialog({
   open,
   handleOpenChange,
   handleConfirm,
-  loading,
+  isLoading,
 }: ConfirmDeleteDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={handleOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>
-            Are you sure you want to delete this testimonial?
-          </AlertDialogTitle>
+          <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
+            <Trash2Icon />
+          </AlertDialogMedia>
+          <AlertDialogTitle>Delete testimonial?</AlertDialogTitle>
           <AlertDialogDescription>
+            Are you sure you want to delete this testimonial? <br />
             This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="focus-visible:ring-0">
+          <AlertDialogCancel variant="outline" disabled={isLoading}>
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
-            className="bg-destructive hover:bg-destructive/90 text-white"
-            disabled={loading}
+            variant="destructive"
             onClick={(e) => {
               e.preventDefault();
               handleConfirm();
             }}
+            disabled={isLoading}
           >
-            Yes, delete
-            {loading && <Spinner />}
+            {isLoading && <Spinner />}
+            Delete
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -64,7 +64,7 @@ export default function ResponseCardMenuActions({
         open={openDeleteDialog}
         handleOpenChange={setOpenDeleteDialog}
         handleConfirm={handleDelete}
-        loading={isDeleting}
+        isLoading={isDeleting}
       />
     </>
   );

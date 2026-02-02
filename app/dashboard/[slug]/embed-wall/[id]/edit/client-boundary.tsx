@@ -33,7 +33,7 @@ export default function ClientBoundary({
 
   return (
     <FormProvider {...methods}>
-      <LayoutClient />;
+      <LayoutClient />
     </FormProvider>
   );
 }

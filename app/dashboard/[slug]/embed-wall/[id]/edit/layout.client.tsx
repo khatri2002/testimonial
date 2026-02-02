@@ -8,7 +8,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { EmbedWallSchema } from "@/lib/schema.types";
-import { BrickWallFire, Eye } from "lucide-react";
+import { BrickWallFire, Eye, MessageSquareText } from "lucide-react";
 import { useState, useTransition } from "react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
@@ -23,6 +23,7 @@ export default function LayoutClient() {
   const setPublished = useEmbedWallStore((state) => state.setPublished);
   const id = useEmbedWallStore((state) => state.id);
   const slug = useEmbedWallStore((state) => state.slug);
+  const responsesById = useEmbedWallStore((state) => state.responsesById);
 
   const [openPublishedDialog, setOpenPublishedDialog] = useState(false);
 
@@ -60,9 +61,12 @@ export default function LayoutClient() {
     window.open(previewUrl);
   };
 
+  const hasTestimonials = Object.values(responsesById).length > 0;
+
   return (
     <>
       <LoadingOverlay isLoading={isPublishing} />
+
       <div className="flex items-center justify-between border-t border-b px-4 py-3">
         <div className="flex items-center gap-3">
           <BrickWallFire />
@@ -84,6 +88,7 @@ export default function LayoutClient() {
                 size="icon-lg"
                 aria-label="preview"
                 onClick={handlePreview}
+                disabled={!hasTestimonials}
               >
                 <Eye className="size-6" />
               </Button>
@@ -96,7 +101,7 @@ export default function LayoutClient() {
             <Button
               className="bg-theme-primary hover:bg-theme-primary/85 font-semibold"
               onClick={handlePublish}
-              disabled={isPublishing}
+              disabled={!hasTestimonials || isPublishing}
             >
               Publish
               {isPublishing && <Spinner />}
@@ -112,22 +117,37 @@ export default function LayoutClient() {
           )}
         </div>
       </div>
-      <div className="m-4 mx-15">
-        <Tabs defaultValue={defaultValue}>
-          <TabsList className="mx-auto">
+
+      {hasTestimonials ? (
+        <div className="mx-15 my-4">
+          <Tabs defaultValue={defaultValue}>
+            <TabsList className="mx-auto">
+              {tabs.map((tab) => (
+                <TabsTrigger key={tab.value} value={tab.value}>
+                  {tab.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
             {tabs.map((tab) => (
-              <TabsTrigger key={tab.value} value={tab.value}>
-                {tab.label}
-              </TabsTrigger>
+              <TabsContent key={tab.value} value={tab.value}>
+                <div className="p-2">{<tab.content />}</div>
+              </TabsContent>
             ))}
-          </TabsList>
-          {tabs.map((tab) => (
-            <TabsContent key={tab.value} value={tab.value}>
-              <div className="p-2">{<tab.content />}</div>
-            </TabsContent>
-          ))}
-        </Tabs>
-      </div>
+          </Tabs>
+        </div>
+      ) : (
+        <div className="bg-card mx-15 my-4 flex flex-col items-center rounded-lg p-7">
+          <MessageSquareText className="text-muted-foreground size-10" />
+          <div className="mt-4 space-y-1 text-center">
+            <h3>No testimonials yet</h3>
+            <p className="text-muted-foreground text-sm">
+              At the moment, there are no testimonials to display on your embed
+              wall.
+            </p>
+          </div>
+        </div>
+      )}
+
       <PublishedDialog
         id={id}
         open={openPublishedDialog}
