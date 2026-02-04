@@ -6,6 +6,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { getTestimonialWallEmbedCode } from "@/lib/testimonialWallEmbed";
 import { Check, Copy, Trash } from "lucide-react";
 import { MouseEvent, useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -20,13 +21,6 @@ export default function EmbedWallCardActions({
   id,
   published,
 }: EmbedWallCardActionsProps) {
-  const domain = process.env.NEXT_PUBLIC_APP_URL;
-  const embedCode = `<iframe
-    id="testimonial-wall"
-    src="${domain}/embed-wall/${id}"
-    width="100%"
-  ></iframe>`;
-
   const [copied, setCopied] = useState(false);
   const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
 
@@ -35,7 +29,7 @@ export default function EmbedWallCardActions({
   const handleCopy = (e: MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
 
-    navigator.clipboard.writeText(embedCode);
+    navigator.clipboard.writeText(getTestimonialWallEmbedCode(id));
     setCopied(true);
 
     setTimeout(() => setCopied(false), 3000);
