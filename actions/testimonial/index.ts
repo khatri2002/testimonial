@@ -303,7 +303,7 @@ export const editSpace = async (id: string, fd: FormData) => {
   if (!space) return { success: false, message: "Space not found" };
 
   // validate data
-  let data;
+  let data, imageAction, thankYouImageAction;
   try {
     const basics = JSON.parse(fd.get("basics") as string);
     const prompts = JSON.parse(fd.get("prompts") as string);
@@ -311,6 +311,8 @@ export const editSpace = async (id: string, fd: FormData) => {
     const extra_settings = JSON.parse(fd.get("extra_settings") as string);
     const image = fd.get("image") ?? undefined;
     const thank_you_image = fd.get("thank_you_image") ?? undefined;
+    imageAction = fd.get("imageAction");
+    thankYouImageAction = fd.get("thankYouImageAction");
     const rawData = {
       basics: { ...basics, image },
       prompts,
@@ -328,14 +330,17 @@ export const editSpace = async (id: string, fd: FormData) => {
 
   // upload images if provided
   let imageRes, thankYouImageRes;
-  if (data.basics.image) {
+  if (imageAction === "replace" && data.basics.image) {
     try {
       imageRes = await uploadFileToCloudinary(data.basics.image);
     } catch (err) {
       return { success: false, message: "Failed to upload image" };
     }
   }
-  if (data.thank_you_screen.thank_you_image) {
+  if (
+    thankYouImageAction === "replace" &&
+    data.thank_you_screen.thank_you_image
+  ) {
     try {
       thankYouImageRes = await uploadFileToCloudinary(
         data.thank_you_screen.thank_you_image,
@@ -441,6 +446,17 @@ export const editSpace = async (id: string, fd: FormData) => {
     position: index + 1,
   }));
 
+  const imageUpdateMap = {
+    replace: imageRes,
+    remove: Prisma.DbNull,
+    keep: undefined,
+  };
+  const thankYouImageUpdateMap = {
+    replace: thankYouImageRes,
+    remove: Prisma.DbNull,
+    keep: undefined,
+  };
+
   // save to database
   try {
     await prisma.space.update({
@@ -448,13 +464,16 @@ export const editSpace = async (id: string, fd: FormData) => {
       data: {
         slug,
         name,
-        image: imageRes ?? Prisma.DbNull,
+        image: imageUpdateMap[imageAction as keyof typeof imageUpdateMap],
         header_title,
         message,
         theme: dark_mode ? "dark" : "light",
         question_label,
         questions: questions.map(({ question }) => question),
-        thank_you_image: thankYouImageRes ?? Prisma.DbNull,
+        thank_you_image:
+          thankYouImageUpdateMap[
+            thankYouImageAction as keyof typeof imageUpdateMap
+          ],
         thank_you_title,
         thank_you_message,
         send_btn_text,

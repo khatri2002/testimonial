@@ -4,7 +4,7 @@ import { createNewSpace } from "@/actions/testimonial";
 import SpaceForm from "@/components/space-form/page";
 import { SpaceSchema } from "@/lib/schema.types";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
 export default function CreateSpace() {
@@ -82,6 +82,13 @@ export default function CreateSpace() {
 
   const [isCreating, startCreateSpace] = useTransition();
 
+  const [previewImage, setPreviewImage] = useState<string | undefined>(
+    undefined,
+  );
+  const [previewThankYouImage, setPreviewThankYouImage] = useState<
+    string | undefined
+  >(undefined);
+
   const onSubmit = (data: SpaceSchema) => {
     startCreateSpace(async () => {
       const {
@@ -119,6 +126,10 @@ export default function CreateSpace() {
     <SpaceForm
       mode="create"
       defaultValues={defaultValues}
+      previewImage={previewImage}
+      previewThankYouImage={previewThankYouImage}
+      handleSetPreviewImage={setPreviewImage}
+      handleSetPreviewThankYouImage={setPreviewThankYouImage}
       isLoading={isCreating}
       onSubmit={onSubmit}
     />

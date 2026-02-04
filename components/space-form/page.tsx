@@ -30,6 +30,10 @@ interface BaseProps {
   defaultValues: SpaceSchema;
   onSubmit: (data: SpaceSchema) => void;
   isLoading: boolean;
+  previewImage: string | undefined;
+  previewThankYouImage: string | undefined;
+  handleSetPreviewImage: (image: string | undefined) => void;
+  handleSetPreviewThankYouImage: (image: string | undefined) => void;
 }
 
 interface CreateSpaceProps extends BaseProps {
@@ -38,34 +42,27 @@ interface CreateSpaceProps extends BaseProps {
 
 interface EditSpaceProps extends BaseProps {
   mode: "edit";
-  previewImages: {
-    image?: string;
-    thankYouImage?: string;
-  };
   storedSlug: string;
 }
 
 type SpaceFormProps = CreateSpaceProps | EditSpaceProps;
 
 export default function SpaceForm(props: SpaceFormProps) {
-  const { mode, defaultValues, onSubmit, isLoading } = props;
-  let imageUrl, thankYouImageUrl, storedSlug: string | undefined;
+  const {
+    mode,
+    defaultValues,
+    onSubmit,
+    isLoading,
+    previewImage,
+    previewThankYouImage,
+    handleSetPreviewImage,
+    handleSetPreviewThankYouImage,
+  } = props;
+  let storedSlug: string | undefined;
   if (mode === "edit") {
-    const {
-      previewImages: { image, thankYouImage },
-      storedSlug: storedSlugTemp,
-    } = props;
-    imageUrl = image;
-    thankYouImageUrl = thankYouImage;
+    const { storedSlug: storedSlugTemp } = props;
     storedSlug = storedSlugTemp;
   }
-
-  const [previewImage, setPreviewImage] = useState<string | undefined>(
-    imageUrl,
-  );
-  const [previewThankYouImage, setPreviewThankYouImage] = useState<
-    string | undefined
-  >(thankYouImageUrl);
 
   useDisableScroll();
 
@@ -163,7 +160,7 @@ export default function SpaceForm(props: SpaceFormProps) {
                 <TabsContent value="basics">
                   <BasicsTabContent
                     previewImage={previewImage}
-                    handleSetPreviewImage={setPreviewImage}
+                    handleSetPreviewImage={handleSetPreviewImage}
                     isCheckingSlug={isCheckingSlug}
                     slugAvailableRes={slugAvailableRes}
                     slugAvailability={slugAvailability}
@@ -175,7 +172,9 @@ export default function SpaceForm(props: SpaceFormProps) {
                 <TabsContent value="thank_you_screen">
                   <ThankYouTabContent
                     previewThankYouImage={previewThankYouImage}
-                    handleSetPreviewThankYouImage={setPreviewThankYouImage}
+                    handleSetPreviewThankYouImage={
+                      handleSetPreviewThankYouImage
+                    }
                   />
                 </TabsContent>
                 <TabsContent value="extra_settings">

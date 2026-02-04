@@ -4,7 +4,7 @@ import { editSpace } from "@/actions/testimonial";
 import SpaceForm from "@/components/space-form/page";
 import { SpaceSchema } from "@/lib/schema.types";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
 interface SpaceFormClientProps {
@@ -28,6 +28,13 @@ export default function SpaceFormClient({
   const from = searchParams.get("from"); // dashboard | inbox | embed-wall
   const [isEditing, startEditSpace] = useTransition();
 
+  const [previewImage, setPreviewImage] = useState<string | undefined>(
+    previewImages.image,
+  );
+  const [previewThankYouImage, setPreviewThankYouImage] = useState<
+    string | undefined
+  >(previewImages.thankYouImage);
+
   const onSubmit = (data: SpaceSchema) => {
     startEditSpace(async () => {
       const {
@@ -42,8 +49,24 @@ export default function SpaceFormClient({
       fd.append("prompts", JSON.stringify(prompts));
       fd.append("thank_you_screen", JSON.stringify(restThankYouScreen));
       fd.append("extra_settings", JSON.stringify(extra_settings));
-      if (image) fd.append("image", image);
-      if (thank_you_image) fd.append("thank_you_image", thank_you_image);
+
+      // handle image actions
+      if (image) {
+        fd.append("image", image);
+        fd.append("imageAction", "replace");
+      } else {
+        if (previewImage) fd.append("imageAction", "keep");
+        else fd.append("imageAction", "remove");
+      }
+
+      // handle thank you image actions
+      if (thank_you_image) {
+        fd.append("thank_you_image", thank_you_image);
+        fd.append("thankYouImageAction", "replace");
+      } else {
+        if (previewThankYouImage) fd.append("thankYouImageAction", "keep");
+        else fd.append("thankYouImageAction", "remove");
+      }
 
       try {
         const { success, message, data } = await editSpace(id, fd);
@@ -78,7 +101,10 @@ export default function SpaceFormClient({
       defaultValues={defaultValues}
       onSubmit={onSubmit}
       isLoading={isEditing}
-      previewImages={previewImages}
+      previewImage={previewImage}
+      previewThankYouImage={previewThankYouImage}
+      handleSetPreviewImage={setPreviewImage}
+      handleSetPreviewThankYouImage={setPreviewThankYouImage}
       storedSlug={storedSlug}
     />
   );
