@@ -19,7 +19,7 @@ export default async function SpaceEmbededWall({
   if (!email) redirect("/sign-in");
 
   const embedWalls = await prisma.embedWall.findMany({
-    where: { space: { user: { email } } },
+    where: { space: { slug, user: { email } } },
   });
 
   return embedWalls.length === 0 ? (
