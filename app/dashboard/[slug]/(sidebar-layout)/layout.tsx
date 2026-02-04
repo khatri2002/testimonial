@@ -1,8 +1,10 @@
 import { auth } from "@/auth";
 import { MessagesSquare } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
+import { Suspense } from "react";
 import { getSpace } from "./_lib/queries";
 import EditSpaceBtn from "./components/edit-space-btn";
+import Loading from "./components/loading";
 import Sidebar from "./components/sidebar";
 
 interface SpaceLayoutProps {
@@ -20,6 +22,26 @@ export default async function SpaceLayout({
 
   const { slug } = await params;
 
+  return (
+    <Suspense fallback={<Loading />}>
+      <SpaceLayoutData slug={slug} email={email}>
+        {children}
+      </SpaceLayoutData>
+    </Suspense>
+  );
+}
+
+interface SpaceLayoutDataProps {
+  slug: string;
+  email: string;
+  children: React.ReactNode;
+}
+
+async function SpaceLayoutData({
+  slug,
+  email,
+  children,
+}: SpaceLayoutDataProps) {
   const space = await getSpace(slug, email);
   if (!space) notFound();
 
