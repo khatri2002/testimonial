@@ -16,32 +16,25 @@ export default async function SpaceLayout({
   params,
   children,
 }: SpaceLayoutProps) {
-  const session = await auth();
-  const email = session?.user?.email;
-  if (!email) redirect("/sign-in");
-
   const { slug } = await params;
 
   return (
     <Suspense fallback={<Loading />}>
-      <SpaceLayoutData slug={slug} email={email}>
-        {children}
-      </SpaceLayoutData>
+      <SpaceLayoutData slug={slug}>{children}</SpaceLayoutData>
     </Suspense>
   );
 }
 
 interface SpaceLayoutDataProps {
   slug: string;
-  email: string;
   children: React.ReactNode;
 }
 
-async function SpaceLayoutData({
-  slug,
-  email,
-  children,
-}: SpaceLayoutDataProps) {
+async function SpaceLayoutData({ slug, children }: SpaceLayoutDataProps) {
+  const session = await auth();
+  const email = session?.user?.email;
+  if (!email) redirect("/sign-in");
+
   const space = await getSpace(slug, email);
   if (!space) notFound();
 
