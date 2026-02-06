@@ -2,7 +2,7 @@
 
 import { Prisma } from "@/prisma/src/generated/prisma/client";
 import { useEffect, useRef } from "react";
-import Masonry from "react-responsive-masonry";
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import TestimonialCard from "./testimonial-card";
 
 interface TestimonialCardsProps {
@@ -18,13 +18,11 @@ export default function TestimonialCards({
 }: TestimonialCardsProps) {
   const { card_gap, page_bg_color, embedWallResponses } = embedWall;
 
-  const hasFewCards = embedWallResponses.length <= 3;
   const gap = `${card_gap}px`;
 
   const cards = embedWallResponses.map((embedWallResponse) => (
     <TestimonialCard
       key={embedWallResponse.id}
-      className={hasFewCards ? "w-1/3" : undefined}
       response={embedWallResponse.response}
       embedWall={embedWall}
     />
@@ -53,15 +51,9 @@ export default function TestimonialCards({
   return (
     <div className={className} style={{ backgroundColor: page_bg_color }}>
       <div ref={containerRef} className="p-5">
-        {hasFewCards ? (
-          <div className="flex items-start justify-center" style={{ gap }}>
-            {cards}
-          </div>
-        ) : (
-          <Masonry columnsCount={3} gutter={gap}>
-            {cards}
-          </Masonry>
-        )}
+        <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3 }}>
+          <Masonry gutter={gap}>{cards}</Masonry>
+        </ResponsiveMasonry>
       </div>
     </div>
   );

@@ -4,41 +4,42 @@ import Link from "next/link";
 import CTAButton from "./_components/cta-button";
 import EmbedCode from "./_components/embed-code";
 import EmbedWall from "./_components/embed-wall";
+import { SectionDescription, SectionTitle } from "./_components/section-text";
 
 export default function Home() {
   return (
     <>
-      <div className="flex min-h-screen flex-col items-center justify-center gap-10">
-        <div className="relative h-10 w-56">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-8 p-4 lg:gap-10">
+        <div className="relative h-10 w-42 sm:w-50 lg:w-56">
           <Image src="testimonial-dark_theme-logo.svg" alt="testimonial" fill />
         </div>
-        <h1 className="max-w-3xl text-center text-6xl font-bold">
+        <SectionTitle>
           Get testimonials from your customers with ease
-        </h1>
-        <p className="text-muted-foreground max-w-4xl text-center text-lg">
+        </SectionTitle>
+        <SectionDescription>
           Collecting testimonials is hard, we get it! So we built Testimonial.
           In minutes, you can collect testimonials from your customers with no
           need for a developer.
-        </p>
+        </SectionDescription>
         <CTAButton href="/sign-up">Get started</CTAButton>
       </div>
 
-      <div className="flex flex-col items-center gap-10 border-t border-b py-16">
-        <h2 className="max-w-3xl text-center text-6xl font-bold">
+      <div className="flex flex-col items-center gap-10 border-t border-b p-4 py-10 sm:py-16">
+        <SectionTitle>
           Add testimonials to your website with no coding!
-        </h2>
-        <p className="text-muted-foreground max-w-4xl text-center text-lg">
+        </SectionTitle>
+        <SectionDescription>
           Copy and paste our HTML code to add the Wall Of Testimonials to your
           website.
-        </p>
-        <div className="w-full px-16">
+        </SectionDescription>
+        <div className="w-full sm:px-16">
           <EmbedWall />
         </div>
         <EmbedCode />
       </div>
 
-      <div className="flex flex-col items-center space-y-8 py-16">
-        <h2 className="max-w-3xl text-center text-4xl font-bold">
+      <div className="flex flex-col items-center space-y-6 py-10 md:py-16 lg:space-y-8">
+        <h2 className="max-w-3xl text-center text-2xl font-bold md:text-3xl lg:text-4xl">
           Ready to collect testimonials?
         </h2>
         <CTAButton href="/sign-up">Get started</CTAButton>

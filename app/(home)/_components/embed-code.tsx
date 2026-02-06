@@ -31,7 +31,7 @@ export default function EmbedCode() {
       };
 
   return (
-    <div className="bg-card w-2xl space-y-4 rounded-lg border p-5">
+    <div className="bg-card max-w-full space-y-4 rounded-lg border p-5 md:max-w-2xl">
       <h3 className="text-lg">Try our sample embed code</h3>
       <div className="bg-input overflow-x-auto rounded-md p-3">
         <pre className="text-sm">{embedCode}</pre>
