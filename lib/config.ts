@@ -6,3 +6,5 @@ export const themeOptions = [
 ] as const;
 
 export const borderRadiusOptions = ["none", "sm", "md", "lg", "xl"] as const;
+
+export const saltRounds = 10;

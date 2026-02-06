@@ -38,13 +38,15 @@ export default function UserMenu({ user }: UserMenuProps) {
           />
         ) : (
           <span className="bg-muted-foreground flex size-9 cursor-pointer items-center justify-center rounded-full">
-            {name?.[0]}
+            {name?.charAt(0) || email?.charAt(0).toUpperCase()}
           </span>
         )}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-50">
         <div className="text-center">
-          <DropdownMenuLabel className="pb-0">{name}</DropdownMenuLabel>
+          {name && (
+            <DropdownMenuLabel className="pb-0">{name}</DropdownMenuLabel>
+          )}
           <DropdownMenuLabel className="text-muted-foreground">
             {email}
           </DropdownMenuLabel>

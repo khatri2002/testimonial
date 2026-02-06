@@ -116,3 +116,8 @@ export const embedWallSchema = z.object({
     border_radius: z.enum(borderRadiusOptions),
   }),
 });
+
+export const authSchema = z.object({
+  email: z.email(),
+  password: z.string().nonempty(),
+});
