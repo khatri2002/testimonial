@@ -137,7 +137,7 @@ export default function SpaceForm(props: SpaceFormProps) {
         <ResizablePanelGroup direction="horizontal" className="flex-[1_1_0]">
           <ResizablePanel defaultSize={50} className="overflow-y-auto! p-4">
             <form
-              className="mx-auto w-md"
+              className="mx-auto max-w-md p-2"
               onSubmit={handleSubmit(onSubmit_, onError)}
             >
               <Tabs
@@ -190,13 +190,16 @@ export default function SpaceForm(props: SpaceFormProps) {
               </Button>
             </form>
           </ResizablePanel>
-          <ResizableHandle withHandle />
+          <ResizableHandle withHandle className="hidden md:flex" />
           <ResizablePanel
             defaultSize={50}
-            className={cn("bg-background @container overflow-y-auto! p-4", {
-              dark: dark_mode,
-              light: !dark_mode,
-            })}
+            className={cn(
+              "bg-background @container hidden overflow-y-auto! p-4 md:block",
+              {
+                dark: dark_mode,
+                light: !dark_mode,
+              },
+            )}
           >
             {activeTab === "thank_you_screen" ? (
               <ThankYouScreenPreview

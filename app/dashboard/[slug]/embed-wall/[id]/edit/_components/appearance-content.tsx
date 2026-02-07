@@ -52,7 +52,7 @@ export default function AppearanceContent() {
   };
 
   return (
-    <div className="mx-auto my-2 w-100 space-y-6">
+    <div className="mx-auto my-2 max-w-100 space-y-6">
       <div className="bg-card relative rounded-lg border p-5">
         <h4 className="bg-background absolute -top-3.5 left-3 rounded px-1.5">
           Components Visibility

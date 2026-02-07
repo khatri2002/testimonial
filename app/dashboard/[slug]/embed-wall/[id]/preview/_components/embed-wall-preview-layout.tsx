@@ -42,17 +42,17 @@ export default function EmbedWallPreviewLayout({
 
   return (
     <>
-      <div className="bg-card flex items-center justify-between px-6 py-4">
-        <span className="text-lg">Preview mode</span>
+      <div className="bg-card flex flex-col items-center justify-between gap-2 px-6 py-3 sm:flex-row sm:py-4">
+        <span className="sm:text-lg">Preview mode</span>
 
-        <div className="flex items-center gap-6">
+        <div className="flex w-full items-center justify-between gap-6 sm:w-auto">
           <span
             className={cn(
               "flex items-center gap-2 text-sm font-semibold",
               publishState.textClass,
             )}
           >
-            <publishState.icon className="size-5" />
+            <publishState.icon className="size-4 sm:size-5" />
             {publishState.label}
           </span>
           {embedWall.published && (

@@ -68,8 +68,8 @@ export default function LayoutClient() {
       <LoadingOverlay isLoading={isPublishing} />
 
       <div className="flex items-center justify-between border-t border-b px-4 py-3">
-        <div className="flex items-center gap-3">
-          <BrickWallFire />
+        <div className="flex items-center gap-1 sm:gap-3">
+          <BrickWallFire className="size-5 sm:size-6" />
           <div className="before:bg-ring relative before:absolute before:bottom-0 before:left-1/2 before:block before:h-px before:w-0 before:-translate-x-1/2 before:transition-all before:content-[''] focus-within:before:w-full">
             <input
               {...register("name")}
@@ -80,7 +80,7 @@ export default function LayoutClient() {
             />
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1 sm:gap-3">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -90,7 +90,7 @@ export default function LayoutClient() {
                 onClick={handlePreview}
                 disabled={!hasTestimonials}
               >
-                <Eye className="size-6" />
+                <Eye className="size-5 sm:size-6" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
@@ -119,7 +119,7 @@ export default function LayoutClient() {
       </div>
 
       {hasTestimonials ? (
-        <div className="mx-15 my-4">
+        <div className="mx-5 my-4 md:mx-10 lg:mx-15">
           <Tabs defaultValue={defaultValue}>
             <TabsList className="mx-auto">
               {tabs.map((tab) => (

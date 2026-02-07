@@ -35,6 +35,16 @@ export default function PublishedDialog({
     setTimeout(() => setCopied(false), 3000);
   };
 
+  const copyState = copied
+    ? {
+        icon: Check,
+        label: "Copied!",
+      }
+    : {
+        icon: Copy,
+        label: "Copy the code",
+      };
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-xl">
@@ -46,23 +56,14 @@ export default function PublishedDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="bg-muted flex overflow-x-auto rounded-md p-5">
-          <pre className="text-sm">{embedCode}</pre>
+        <div className="bg-muted flex overflow-x-auto rounded-md p-3 sm:p-5">
+          <pre className="text-xs sm:text-sm">{embedCode}</pre>
         </div>
 
         <DialogFooter>
           <Button type="submit" disabled={copied} onClick={handleCopy}>
-            {copied ? (
-              <>
-                <Check />
-                Copied!
-              </>
-            ) : (
-              <>
-                <Copy />
-                Copy the code
-              </>
-            )}
+            <copyState.icon />
+            {copyState.label}
           </Button>
         </DialogFooter>
       </DialogContent>

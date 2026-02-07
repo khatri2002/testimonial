@@ -78,7 +78,7 @@ export default function SelectTestimonialDialog({
           <DialogTitle>Update testimonial selection</DialogTitle>
         </DialogHeader>
         <div className="h-[85vh] space-y-4 overflow-scroll">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Checkbox
@@ -102,6 +102,7 @@ export default function SelectTestimonialDialog({
               placeholder="Search by name or keyword..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              className="text-sm sm:text-base"
             />
           </div>
 
@@ -110,7 +111,7 @@ export default function SelectTestimonialDialog({
           </p>
 
           {filteredResponsesWithInclusion.length > 0 ? (
-            <div className="grid grid-cols-3 gap-4 p-1">
+            <div className="grid gap-4 p-1 sm:grid-cols-2 md:grid-cols-3">
               {filteredResponsesWithInclusion.map((response) => (
                 <TestimonialCardSelectable
                   key={response.id}
