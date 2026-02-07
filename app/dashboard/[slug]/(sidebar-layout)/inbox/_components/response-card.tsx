@@ -41,7 +41,7 @@ export default function ResponseCard({ response }: ResponseCardProps) {
             </Button>
           </DropdownMenuTrigger>
         </div>
-        <div className="flex items-end justify-between gap-10">
+        <div className="flex flex-col items-end justify-between gap-8 sm:flex-row sm:gap-10">
           <div className="lower-left">
             {answers.rating && (
               <Rating value={Number(answers.rating.value)} readOnly>
@@ -50,11 +50,11 @@ export default function ResponseCard({ response }: ResponseCardProps) {
                 ))}
               </Rating>
             )}
-            <p className="text-muted-foreground line-clamp-2 text-sm">
+            <p className="text-muted-foreground line-clamp-2 text-xs sm:text-sm">
               {answers.testimonial.value}
             </p>
           </div>
-          <div className="flex flex-col text-right text-sm text-nowrap">
+          <div className="flex flex-col text-right text-xs text-nowrap sm:text-sm">
             <span>Submitted at</span>
             <span className="text-muted-foreground">
               {format(new Date(submitted_at), "MMM d, yyyy, h:mm a")}

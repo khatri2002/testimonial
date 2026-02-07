@@ -38,7 +38,7 @@ export default function EmbedWallCard({ embedWall, slug }: EmbedWallCardProps) {
             </DropdownMenuTrigger>
           </div>
 
-          <div className="flex items-end justify-between text-sm">
+          <div className="flex items-end justify-between text-xs sm:text-sm">
             <div className="text-muted-foreground flex items-center gap-1">
               <publishState.icon className="size-4" />
               <span>{publishState.label}</span>

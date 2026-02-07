@@ -49,18 +49,23 @@ export default function EmbedWallHeader({ slug }: EmbedWallHeaderProps) {
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-col items-center gap-2 sm:flex-row">
       <InputGroup>
         <InputGroupInput
           placeholder="Search by name..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          className="text-sm sm:text-base"
         />
         <InputGroupAddon>
           <Search />
         </InputGroupAddon>
       </InputGroup>
-      <Button onClick={handleCreateEmbedWall} disabled={isCreating}>
+      <Button
+        className="w-full sm:w-auto"
+        onClick={handleCreateEmbedWall}
+        disabled={isCreating}
+      >
         Create embed wall
         {isCreating && <Spinner />}
       </Button>

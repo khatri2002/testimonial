@@ -23,6 +23,7 @@ export default function SearchInput({ className }: SearchInputProps) {
         placeholder="Search by name or keyword..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        className="text-sm sm:text-base"
       />
       <InputGroupAddon>
         <Search />

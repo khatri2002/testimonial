@@ -24,7 +24,9 @@ export default function Sidebar({ slug, className }: SidebarProps) {
   const pathname = usePathname();
 
   return (
-    <div className={cn("w-xs border-r", className)}>
+    <div
+      className={cn("border-r sm:min-w-48 md:min-w-3xs lg:min-w-xs", className)}
+    >
       <ul className="space-y-1">
         {navItems.map(({ label, href, icon }, index) => (
           <li key={`item-${index}`}>
@@ -36,7 +38,7 @@ export default function Sidebar({ slug, className }: SidebarProps) {
                 })}
               >
                 {icon}
-                {label}
+                <span className="hidden sm:block">{label}</span>
               </Button>
             </Link>
           </li>

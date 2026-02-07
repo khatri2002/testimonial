@@ -82,9 +82,12 @@ export default function ViewResponseDialog({
             View the details of this response.
           </DialogDescription>
         </DialogHeader>
-        <ul className="my-2 space-y-1.5 text-sm">
+        <ul className="my-2 space-y-3 text-sm md:space-y-1.5">
           {answers.map((answer, index) => (
-            <li key={`answer-${index}`} className="flex gap-4">
+            <li
+              key={`answer-${index}`}
+              className="flex flex-col gap-1 md:flex-row md:gap-4"
+            >
               <span className="text-muted-foreground w-66">
                 {answer.label}:
               </span>

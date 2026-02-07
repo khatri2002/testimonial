@@ -78,7 +78,7 @@ export default function AuthContainer({
 
   return (
     <>
-      <div className="mt-6 flex gap-4">
+      <div className="mt-6 flex flex-col gap-4 sm:flex-row">
         <Button
           className="bg-card hover:bg-muted text-foreground border px-8 py-5 font-semibold"
           disabled={isAuthPending}

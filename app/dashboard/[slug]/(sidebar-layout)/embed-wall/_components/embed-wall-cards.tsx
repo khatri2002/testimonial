@@ -29,9 +29,11 @@ export default function EmbedWallCards({
     : embedWalls;
 
   return filteredEmbedWalls.length === 0 ? (
-    <div className="text-muted-foreground flex flex-col items-center gap-4 p-10">
-      <Grid2x2X className="size-11" />
-      <p>There are no walls matching your current search</p>
+    <div className="text-muted-foreground flex flex-col items-center gap-4 p-10 text-sm sm:text-base">
+      <Grid2x2X className="size-9 sm:size-11" />
+      <p className="text-center">
+        There are no walls matching your current search
+      </p>
     </div>
   ) : (
     <div className="mt-4 space-y-3">
