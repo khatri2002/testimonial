@@ -13,6 +13,7 @@ model User {
   id            String    @id @default(cuid())
   name          String?
   email         String    @unique
+  password      String?
   emailVerified DateTime?
   image         String?
   createdAt     DateTime  @default(now())
@@ -78,9 +79,10 @@ model Space {
 
   userId String
 
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  fields    Field[]
-  responses Response[]
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fields     Field[]
+  responses  Response[]
+  embedWalls EmbedWall[]
 }
 
 enum Type {
@@ -127,11 +129,55 @@ model Response {
 
   spaceId String
 
-  space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  space              Space               @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  embedWallResponses EmbedWallResponse[]
 }
 
-model Test {
-  id         String   @id @default(uuid())
-  test_name  String
+enum BorderRadius {
+  none
+  sm
+  md
+  lg
+  xl
+}
+
+model EmbedWall {
+  id        String  @id @default(uuid())
+  name      String
+  published Boolean @default(false)
+
+  show_date        Boolean @default(false)
+  show_title       Boolean
+  show_company     Boolean
+  show_star_rating Boolean
+
+  theme                Theme        @default(dark)
+  page_bg_color        String       @default("#0a0a0a")
+  card_gap             Int          @default(16) // in px
+  card_bg_color        String       @default("#171717")
+  text_primary_color   String       @default("#fafafa")
+  text_secondary_color String       @default("#a1a1a1")
+  border_radius        BorderRadius @default(lg)
+  border_thickness     Int          @default(1) // in px
+  border_color         String       @default("#ffffff1a")
+
   created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  spaceId String
+
+  space              Space               @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  embedWallResponses EmbedWallResponse[]
+}
+
+model EmbedWallResponse {
+  id          String @id @default(uuid())
+  embedWallId String
+  responseId  String
+  order       Int
+
+  embedWall EmbedWall @relation(fields: [embedWallId], references: [id], onDelete: Cascade)
+  response  Response  @relation(fields: [responseId], references: [id], onDelete: Cascade)
+
+  @@unique([embedWallId, responseId])
 }

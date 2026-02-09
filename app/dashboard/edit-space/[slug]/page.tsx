@@ -1,7 +1,8 @@
+import { auth } from "@/auth";
 import { SpaceSchema } from "@/lib/schema.types";
 import { CloudinaryImage, FieldValidations } from "@/lib/types";
 import { prisma } from "@/prisma";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import SpaceFormClient from "./_components/space-form-client";
 
 interface EditSpaceProps {
@@ -9,10 +10,14 @@ interface EditSpaceProps {
 }
 
 export default async function EditSpace({ params }: EditSpaceProps) {
+  const session = await auth();
+  const email = session?.user?.email;
+  if (!email) redirect("/sign-in");
+
   const { slug } = await params;
 
   const space = await prisma.space.findUnique({
-    where: { slug },
+    where: { slug, user: { email } },
     include: {
       fields: {
         where: { category: "suggested" },

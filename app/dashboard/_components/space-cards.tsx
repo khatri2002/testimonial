@@ -33,9 +33,11 @@ export default function SpaceCards({ spaces }: SpaceCardsProps) {
       ))}
     </div>
   ) : (
-    <div className="text-muted-foreground flex flex-col items-center gap-4 p-10">
-      <Grid2x2X className="size-11" />
-      <p>There are no spaces matching your current search</p>
+    <div className="text-muted-foreground flex flex-col items-center gap-4 p-10 text-sm sm:text-base">
+      <Grid2x2X className="size-9 sm:size-11" />
+      <p className="text-center">
+        There are no spaces matching your current search
+      </p>
     </div>
   );
 }

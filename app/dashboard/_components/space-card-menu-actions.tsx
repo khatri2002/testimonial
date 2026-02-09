@@ -54,7 +54,7 @@ export default function SpaceCardMenuActions({
 
   const handleEdit = (e: MouseEvent) => {
     e.preventDefault();
-    router.push(`/dashboard/edit-space/${slug}`);
+    router.push(`/dashboard/edit-space/${slug}?from=dashboard`);
   };
 
   const handleDuplicate = (e: MouseEvent) => {

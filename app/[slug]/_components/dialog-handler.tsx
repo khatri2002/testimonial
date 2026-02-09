@@ -21,18 +21,19 @@ export default function DialogHandler({ space }: DialogHandlerProps) {
     "form" | "otp" | "thank-you" | null
   >(null);
 
-  const [formResponse, setFormResponse] = useState<Record<
+  const [pendingResponse, setPendingResponse] = useState<Record<
     string,
     unknown
   > | null>(null);
 
   const formDialogRef = useRef<FormDialogRef>(null);
 
-  const handleSaveResponse = async (otp?: string) => {
-    if (!formResponse) return;
-
+  const handleSaveResponse = async (
+    data: Record<string, unknown>,
+    otp?: string,
+  ) => {
     try {
-      const { success, message } = await saveResponse(id, formResponse, otp);
+      const { success, message } = await saveResponse(id, data, otp);
       if (!success) {
         toast.error("Oops! Something went wrong", { description: message });
         return;
@@ -61,8 +62,8 @@ export default function DialogHandler({ space }: DialogHandlerProps) {
         open={activeDialog === "form"}
         handleOpenChange={(open) => setActiveDialog(open ? "form" : null)}
         onSubmit={async (data) => {
-          setFormResponse(data);
           if (verify_email) {
+            setPendingResponse(data);
             try {
               const { success, message } = await sendOtp(String(data.email));
               if (!success) {
@@ -78,16 +79,19 @@ export default function DialogHandler({ space }: DialogHandlerProps) {
               toast.error("Oops! Something went wrong");
             }
           } else {
-            await handleSaveResponse();
+            await handleSaveResponse(data);
           }
         }}
       />
       <OtpDialog
-        email={String(formResponse?.email ?? "")}
+        email={String(pendingResponse?.email ?? "")}
         open={activeDialog === "otp"}
         handleOpenChange={(open) => setActiveDialog(open ? "otp" : null)}
         handleBack={() => setActiveDialog("form")}
-        onSubmit={(data) => handleSaveResponse(data.otp)}
+        onSubmit={(data) => {
+          if (!pendingResponse) return;
+          handleSaveResponse(pendingResponse, data.otp);
+        }}
       />
       <ThankYouDialog
         space={space}

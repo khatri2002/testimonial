@@ -8,20 +8,15 @@ import SpaceCards from "./_components/space-cards";
 
 export default async function Dashboard() {
   const session = await auth();
-  if (!session?.user?.email) redirect("/sign-in");
+  const email = session?.user?.email;
+  if (!email) redirect("/sign-in");
 
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    include: {
-      spaces: {
-        orderBy: { created_at: "desc" },
-        include: { _count: { select: { responses: true } } },
-      },
-    },
+  const spaces = await prisma.space.findMany({
+    where: { user: { email } },
+    include: { _count: { select: { responses: true } } },
+    orderBy: { created_at: "desc" },
   });
-  if (!user) redirect("sign-in");
 
-  const { spaces } = user;
   const hasSpaces = spaces.length > 0;
 
   return (

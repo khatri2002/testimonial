@@ -31,7 +31,7 @@ export default function PagePreview({ previewImage }: PagePreviewProps) {
       <h1 className="text-foreground mt-5 text-center text-3xl leading-8 font-bold @sm:mt-10 @sm:text-5xl @sm:leading-14">
         {header_title || "Header title goes here..."}
       </h1>
-      <p className="text-muted-foreground my-5 text-center sm:my-8 sm:text-lg">
+      <p className="text-muted-foreground my-5 text-center whitespace-pre-line sm:my-8 sm:text-lg">
         {message || "Message goes here..."}
       </p>
       {questions.length > 0 && (
