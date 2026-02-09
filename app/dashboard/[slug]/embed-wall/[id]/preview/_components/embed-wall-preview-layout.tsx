@@ -19,6 +19,8 @@ export default function EmbedWallPreviewLayout({
   embedWall,
   id,
 }: EmbedWallPreviewLayoutProps) {
+  const domain = process.env.NEXT_PUBLIC_APP_URL;
+
   const [copied, setCopied] = useState(false);
 
   const publishState = embedWall.published
@@ -34,7 +36,7 @@ export default function EmbedWallPreviewLayout({
     : { icon: Copy, label: "Copy embed code" };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(getTestimonialWallEmbedCode(id));
+    navigator.clipboard.writeText(getTestimonialWallEmbedCode(id, domain));
     setCopied(true);
 
     setTimeout(() => setCopied(false), 3000);

@@ -16,7 +16,6 @@ export const tabs = [
 
 export const defaultValue = "testimonials";
 
-// TODO: set light colors
 export const themeColors = {
   dark: {
     page_bg_color: "#0a0a0a",
@@ -26,10 +25,10 @@ export const themeColors = {
     border_color: "#ffffff1a",
   },
   light: {
-    page_bg_color: "#fff",
-    card_bg_color: "#fff",
-    text_primary_color: "#fff",
-    text_secondary_color: "#fff",
-    border_color: "#fff",
+    page_bg_color: "#ffffff",
+    card_bg_color: "#ffffff",
+    text_primary_color: "#0a0a0a",
+    text_secondary_color: "#737373",
+    border_color: "#e5e5e5",
   },
 };

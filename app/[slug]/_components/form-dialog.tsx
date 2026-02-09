@@ -230,6 +230,7 @@ export default function FormDialog({
         onOpenAutoFocus={(e) => e.preventDefault()}
         onInteractOutside={(e) => isSubmitting && e.preventDefault()} // prevent closing dialog on outside click when submitting
         onEscapeKeyDown={(e) => isSubmitting && e.preventDefault()} // prevent closing dialog on escape key when submitting
+        className="max-h-[90vh] overflow-y-auto"
       >
         <DialogLoadingOverlay isLoading={isSubmitting} />
 

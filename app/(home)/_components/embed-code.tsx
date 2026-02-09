@@ -1,14 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { JSFIDDLE_URL } from "@/constants";
 import { getTestimonialWallEmbedCode } from "@/lib/testimonialWallEmbed";
 import { Check, Copy, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { wallId } from "../lib/config";
+import { domain, wallId } from "../lib/config";
 
 export default function EmbedCode() {
-  const embedCode = getTestimonialWallEmbedCode(wallId);
+  const embedCode = getTestimonialWallEmbedCode(wallId, domain);
 
   const [copied, setCopied] = useState(false);
 
@@ -41,8 +42,7 @@ export default function EmbedCode() {
           <copyState.icon />
           {copyState.label}
         </Button>
-        <Link href="/" target="_blank">
-          {/* TODO: add jsfiddle link */}
+        <Link href={JSFIDDLE_URL} target="_blank">
           <Button>
             Live demo
             <ExternalLink />

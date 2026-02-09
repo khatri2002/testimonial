@@ -90,7 +90,9 @@ export default function TestimonialCard({
       )}
       <p
         ref={textRef}
-        className={cn("text-sm", { "line-clamp-5": isTextClamped })}
+        className={cn("text-sm whitespace-pre-line", {
+          "line-clamp-5": isTextClamped,
+        })}
       >
         {answers.testimonial}
       </p>

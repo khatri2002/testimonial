@@ -26,7 +26,8 @@ export default function PublishedDialog({
 
   if (!id) return null; // safety check
 
-  const embedCode = getTestimonialWallEmbedCode(id);
+  const domain = process.env.NEXT_PUBLIC_APP_URL;
+  const embedCode = getTestimonialWallEmbedCode(id, domain);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(embedCode);
