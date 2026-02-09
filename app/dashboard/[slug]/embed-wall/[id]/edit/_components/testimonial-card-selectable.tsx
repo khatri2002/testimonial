@@ -45,7 +45,7 @@ export default function TestimonialCardSelectable({
           ))}
         </Rating>
       )}
-      <p className="text-sm">{answers.testimonial}</p>
+      <p className="text-sm whitespace-pre-line">{answers.testimonial}</p>
     </div>
   );
 }

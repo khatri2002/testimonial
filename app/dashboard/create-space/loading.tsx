@@ -1,9 +1,9 @@
 import { TextShimmer } from "@/components/ui/text-shimmer";
 
-export default function EditSpaceLoading() {
+export default function CreateSpaceLoading() {
   return (
     <TextShimmer className="fixed top-1/2 left-1/2 -translate-1/2 font-mono text-nowrap sm:text-lg">
-      Getting your space ready...
+      Building your space...
     </TextShimmer>
   );
 }

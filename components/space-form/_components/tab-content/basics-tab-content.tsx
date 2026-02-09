@@ -60,6 +60,8 @@ export default function BasicsTabContent({
   previewImage,
   handleSetPreviewImage,
 }: BasicsTabContentProps) {
+  const domain = process.env.NEXT_PUBLIC_APP_URL;
+
   const { control, trigger, resetField, setValue } =
     useFormContext<SpaceSchema>();
 
@@ -164,7 +166,7 @@ export default function BasicsTabContent({
                   }}
                 />
                 <InputGroupAddon>
-                  <InputGroupText>http://localhost:3000/</InputGroupText>
+                  <InputGroupText>{domain}/</InputGroupText>
                 </InputGroupAddon>
                 <InputGroupAddon align="inline-end">
                   {renderSlugAddOn()}

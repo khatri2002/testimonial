@@ -55,7 +55,9 @@ export default function TestimonialCardSortable({
           ))}
         </Rating>
       )}
-      <p className="line-clamp-5 text-sm">{answers.testimonial}</p>
+      <p className="line-clamp-5 text-sm whitespace-pre-line">
+        {answers.testimonial}
+      </p>
     </div>
   );
 }

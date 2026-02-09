@@ -21,6 +21,8 @@ export default function EmbedWallCardActions({
   id,
   published,
 }: EmbedWallCardActionsProps) {
+  const domain = process.env.NEXT_PUBLIC_APP_URL;
+
   const [copied, setCopied] = useState(false);
   const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
 
@@ -29,7 +31,7 @@ export default function EmbedWallCardActions({
   const handleCopy = (e: MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
 
-    navigator.clipboard.writeText(getTestimonialWallEmbedCode(id));
+    navigator.clipboard.writeText(getTestimonialWallEmbedCode(id, domain));
     setCopied(true);
 
     setTimeout(() => setCopied(false), 3000);
